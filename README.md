@@ -1,6 +1,6 @@
-# Money::Tree
+# MoneyTree
 
-TODO: Write a gem description
+MoneyTree is a Ruby implementation of Bitcoin Wallets. Specifically, it supports [Hierachical Deterministic wallets](http://) according to the protocol specified in [BIP0032](https://en.bitcoin.it/wiki/BIP_0032).
 
 ## Installation
 
