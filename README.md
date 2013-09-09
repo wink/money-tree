@@ -2,6 +2,8 @@
 
 MoneyTree is a Ruby implementation of Bitcoin Wallets. Specifically, it supports [Hierachical Deterministic wallets](http://) according to the protocol specified in [BIP0032](https://en.bitcoin.it/wiki/BIP_0032).
 
+If you find this helpful, please consider a small Bitcoin donation to 1nj2kie1hATcFbAaD7dEY53QaxNgt4KBp
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -16,9 +18,12 @@ Or install it yourself as:
 
     $ gem install money-tree
 
+## Prerequisites
+MoneyTree will only work with Ruby 2.0.0 and greater. This is because the version of OpenSSL included with previous versions of Ruby did not include an OpenSSL::PKey::EC::Point#mul (point multiplication) method, which is required in order to calculate a Bitcoin public key from a private key.
+
 ## Usage
 
-TODO: Write usage instructions here
+Documentation coming very soon! For now, please feel free to browse the source and specs.
 
 ## Contributing
 
