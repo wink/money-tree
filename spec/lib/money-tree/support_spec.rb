@@ -1,3 +1,4 @@
+require 'spec_helper'
 require 'money-tree'
 include MoneyTree::Support
 

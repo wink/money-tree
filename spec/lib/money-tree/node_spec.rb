@@ -1,3 +1,4 @@
+require 'spec_helper'
 require 'money-tree'
 
 # Test vectors from https://en.bitcoin.it/wiki/BIP_0032_TestVectors
