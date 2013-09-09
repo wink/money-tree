@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/wink/money-tree.png)](https://travis-ci.org/wink/money-tree) [![Coverage Status](https://coveralls.io/repos/wink/money-tree/badge.png?branch=master)](https://coveralls.io/r/wink/money-tree?branch=master) [![Gem Version](https://badge.fury.io/rb/money-tree.png)](http://badge.fury.io/rb/money-tree)
 # MoneyTree
 
-MoneyTree is a Ruby implementation of Bitcoin Wallets. Specifically, it supports [Hierachical Deterministic wallets](http://) according to the protocol specified in [BIP0032](https://en.bitcoin.it/wiki/BIP_0032).
+MoneyTree is a Ruby implementation of Bitcoin Wallets. Specifically, it supports [Hierachical Deterministic wallets](https://en.bitcoin.it/wiki/Deterministic_Wallet) according to the protocol specified in [BIP0032](https://en.bitcoin.it/wiki/BIP_0032).
 
 If you find this helpful, please consider a small Bitcoin donation to 1nj2kie1hATcFbAaD7dEY53QaxNgt4KBp
 
