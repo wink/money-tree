@@ -7,22 +7,21 @@ module MoneyTree
     
     INT32_MAX = 256 ** [1].pack("L*").size
     INT64_MAX = 256 ** [1].pack("Q*").size
+    BASE58_CHARS = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
     
     def int_to_base58(int_val, leading_zero_bytes=0)
-      alpha = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
-      base58_val, base = '', alpha.size
+      base58_val, base = '', BASE58_CHARS.size
       while int_val > 0
         int_val, remainder = int_val.divmod(base)
-        base58_val = alpha[remainder] + base58_val
+        base58_val = BASE58_CHARS[remainder] + base58_val
       end
       base58_val
     end
 
     def base58_to_int(base58_val)
-      alpha = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
-      int_val, base = 0, alpha.size
+      int_val, base = 0, BASE58_CHARS.size
       base58_val.reverse.each_char.with_index do |char,index|
-        raise ArgumentError, 'Value not a valid Base58 String.' unless char_index = alpha.index(char)
+        raise ArgumentError, 'Value not a valid Base58 String.' unless char_index = BASE58_CHARS.index(char)
         int_val += char_index*(base**index)
       end
       int_val

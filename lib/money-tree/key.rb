@@ -18,10 +18,8 @@ module MoneyTree
     attr_accessor :ec_key
     
     GROUP_NAME = 'secp256k1'
-    GROUP_UNCOMPRESSED = "0479be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8".to_i(16)
-    GROUP_COMPRESSED = "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798".to_i(16)
     ORDER = "fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141".to_i(16)
-    
+
     def valid?(eckey = nil)
       eckey ||= ec_key
       eckey.nil? ? false : eckey.check_key
