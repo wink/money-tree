@@ -3,6 +3,8 @@ require 'base64'
 
 module MoneyTree
   module Support
+    include OpenSSL
+    
     INT32_MAX = 256 ** [1].pack("L*").size
     INT64_MAX = 256 ** [1].pack("Q*").size
     
@@ -48,14 +50,17 @@ module MoneyTree
       encode_base58 address
     end
     
-    def sha256(source, opts = {})
+    def digestify(digest_type, source, opts = {})
       source = [source].pack("H*") unless opts[:ascii]
-      bytes_to_hex OpenSSL::Digest::SHA256.digest(source)
+      bytes_to_hex Digest.digest(digest_type, source)
+    end
+    
+    def sha256(source, opts = {})
+      digestify('SHA256', source, opts)
     end
     
     def ripemd160(source, opts = {})
-      source = [source].pack("H*") unless opts[:ascii]
-      bytes_to_hex OpenSSL::Digest::RIPEMD160.digest(source)
+      digestify('RIPEMD160', source, opts)
     end
     
     def encode_base64(hex)
@@ -67,8 +72,8 @@ module MoneyTree
     end
     
     def hmac_sha512(key, message)
-      digest = OpenSSL::Digest::SHA512.new
-      OpenSSL::HMAC.digest digest, key, message
+      digest = Digest::SHA512.new
+      HMAC.digest digest, key, message
     end
     
     def hmac_sha512_hex(key, message)
