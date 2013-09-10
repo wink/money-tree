@@ -1,4 +1,5 @@
 require 'openssl'
+require 'base64'
 
 module MoneyTree
   module Support
@@ -58,11 +59,11 @@ module MoneyTree
     end
     
     def encode_base64(hex)
-      [[hex].pack("H*")].pack("m0")
+      Base64.encode64([hex].pack("H*")).chomp
     end
     
     def decode_base64(base64)
-      base64.unpack("m0").unpack("H*")
+      Base64.decode64(base64).unpack("H*")[0]
     end
     
     def hmac_sha512(key, message)
@@ -89,21 +90,21 @@ module MoneyTree
       hex = '0' + hex unless (hex.length % 2).zero?
       hex.downcase
     end
-    
+        
     def int_to_bytes(i)
       [int_to_hex(i)].pack("H*")
     end
     
-    def bytes_to_hex(i)
-      i.unpack("H*")[0].downcase
+    def bytes_to_hex(bytes)
+      bytes.unpack("H*")[0].downcase
     end
     
-    def hex_to_bytes(i)
-      [i].pack("H*")
+    def hex_to_bytes(hex)
+      [hex].pack("H*")
     end
     
-    def hex_to_int(i)
-      bytes_to_int(hex_to_bytes(i))
+    def hex_to_int(hex)
+      hex.to_i(16)
     end
   end
 end

@@ -16,12 +16,12 @@ module MoneyTree
       @parent = opts[:parent]
     end
     
-    def is_private?
-      is_private == true
-    end
-    
     def index_hex(i = index)
-      i.to_s(16).rjust(8, "0")
+      if i < 0
+        [i].pack('l>').unpack('H*').first
+      else
+        i.to_s(16).rjust(8, "0")
+      end
     end
     
     def depth_hex(depth)
@@ -94,7 +94,7 @@ module MoneyTree
     end
     
     def to_fingerprint
-      to_identifier[0..7]
+      public_key.to_fingerprint
     end
     
     def to_address
@@ -107,10 +107,11 @@ module MoneyTree
       child_private_key, child_chain_code = derive_private_key(i)
       child_private_key = MoneyTree::PrivateKey.new key: child_private_key
       child_public_key = MoneyTree::PublicKey.new child_private_key
+      index = i 
       
       MoneyTree::Node.new depth: depth+1, 
                                 index: i, 
-                                is_private: i >= 0x80000000,
+                                is_private: i >= 0x80000000 || i < 0,
                                 private_key: child_private_key,
                                 public_key: child_public_key,
                                 chain_code: child_chain_code,
@@ -194,15 +195,9 @@ module MoneyTree
     end
     
     def generate_seed_until_valid
-      begin
-        @seed = generate_seed
-        @seed_hash = generate_seed_hash(@seed)
-        raise SeedGeneration::ValidityError unless seed_valid?(@seed_hash)
-        @seed_generation_attempt = 0
-      rescue SeedGeneration::Failure
-        @seed_generation_attempt += 1
-        @seed_generation_attempt < 10 ? generate_seed_until_valid : raise(SeedGeneration::TooManyAttempts)
-      end
+      @seed = generate_seed
+      @seed_hash = generate_seed_hash(@seed)
+      raise SeedGeneration::ValidityError unless seed_valid?(@seed_hash)
     end
     
     def generate_seed
@@ -219,10 +214,6 @@ module MoneyTree
       !master_key.zero? && master_key < MoneyTree::Key::ORDER
     end
     
-    def is_hex?(str)
-      str =~ /^[0-9A-F]+$/i && str.length % 2 == 0
-    end
-
     def set_master_keys
       @private_key = MoneyTree::PrivateKey.new key: left_from_hash(seed_hash)
       @chain_code = right_from_hash(seed_hash)

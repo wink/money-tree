@@ -12,6 +12,7 @@ module MoneyTree
     class KeyImportFailure < Exception; end
     class KeyFormatNotFound < Exception; end
     class InvalidWIFFormat < Exception; end
+    class InvalidBase64Format < Exception; end
     
     attr_reader :options, :key
     attr_accessor :ec_key
@@ -76,11 +77,10 @@ module MoneyTree
     def parse_raw_key
       result = if raw_key.is_a?(Bignum) then int_to_hex(raw_key)
       elsif hex_format? then raw_key
+      elsif base64_format? then from_base64
       elsif compressed_wif_format? then from_wif
       elsif uncompressed_wif_format? then from_wif
-      elsif base64_format? then from_base64
       else 
-        raise raw_key.inspect
         raise KeyFormatNotFound
       end
       result.downcase
@@ -94,8 +94,9 @@ module MoneyTree
       hex.slice(2..last_char)
     end
     
-    def from_base64
-      decode_base64(raw_key)
+    def from_base64(base64_key = raw_key)
+      raise InvalidBase64Format unless base64_format?(base64_key)
+      decode_base64(base64_key)
     end
     
     def compressed_wif_format?
@@ -106,8 +107,8 @@ module MoneyTree
       raw_key.length == 51 && raw_key.slice(0) == MoneyTree::NETWORKS[:bitcoin][:uncompressed_wif_char]
     end
     
-    def base64_format?
-      raw_key.length == 44
+    def base64_format?(base64_key = raw_key)
+      base64_key.length == 44 && base64_key =~ /^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/
     end
     
     def hex_format?

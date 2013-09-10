@@ -27,6 +27,12 @@ describe MoneyTree::PublicKey do
     end
   end
   
+  describe "to_fingerprint" do
+    it "returns a valid fingerprint" do
+      @key.to_fingerprint.should == "1fddf42e"
+    end
+  end
+  
   describe "to_address(compressed: false)" do
     it "has 34 characters" do
       @key.to_address(compressed: false).length.should == 34

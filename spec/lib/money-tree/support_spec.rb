@@ -24,4 +24,10 @@ describe MoneyTree::Support do
       hmac_sha512_hex("Jefe", "what do ya want for nothing?").should == "164b7a7bfcf819e2e395fbe73b56e0a387bd64222e831fd610270cd7ea2505549758bf75c05a994a6d034f65f8f0e6fdcaeab1a34d4a6b4b636e070a38bce737"
     end
   end
+  
+  describe "hex_to_int" do
+    it "converts hex to integer" do
+      hex_to_int("abcdef0123456789").should == 12379813738877118345
+    end
+  end
 end

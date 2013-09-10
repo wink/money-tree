@@ -538,6 +538,34 @@ describe MoneyTree::Master do
         end
       end
     end
-
+    
+    describe "negative index" do
+      before do
+        @master = MoneyTree::Master.new seed_hex: "000102030405060708090a0b0c0d0e0f"
+        @node = @master.node_for_path "m/0'/-1"
+      end
+    
+      it "has an index of 1" do
+        @node.index.should == -1
+      end
+      
+      it "is public" do
+        @node.is_private.should == true
+      end
+    
+      it "has a depth of 2" do
+        @node.depth.should == 2
+      end
+      
+      it "generates a serialized private key" do
+        @node.to_serialized_hex(:private).should == "0488ade4025c1bd648ffffffffeb8291afea1716eb01a1ce7e00d1843072cbd227309df728ba4015f73d5344aa00d9bd1df2ae56b5be763ddd393573497a8075352bda4aad9ea9083e4c0b1081ac"
+        @node.to_serialized_address(:private).should == "xprv9wTYmMFvAM7JKr2H3xMXcBNzPsqKgffzsM2XnrvKQLJQo2qRftY4uspJCAqjvPypq6Rgvkpoen8MGGnNBxYdeYR5jt6VFdL8cGp2qKnukbW"
+      end
+          
+      it "generates a serialized public_key" do
+        @node.to_serialized_hex.should == "0488b21e025c1bd648ffffffffeb8291afea1716eb01a1ce7e00d1843072cbd227309df728ba4015f73d5344aa02bcd68031f49f6c921e24ed8c1774221433de23eb309709f571d5449909405cfc"
+        @node.to_serialized_address.should == "xpub6ASuArnozifbYL6k9ytXyKKiwufp68PrEZx8bFKvxfqPfqAaDRrKTg8n3Ren8WFSpAbbWLGTimcfYkUB2JbyYFToRBdKT6pEhmpyVe3AqZ9"
+      end
+    end
   end
 end
