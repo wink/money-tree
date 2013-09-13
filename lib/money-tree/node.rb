@@ -5,6 +5,8 @@ module MoneyTree
     
     class PublicDerivationFailure < Exception; end
     class InvalidKeyForIndex < Exception; end
+    class ImportError < Exception; end
+    class PrivatePublicMismatch < Exception; end
     
     def initialize(opts = {})
       @depth = opts[:depth]
@@ -14,6 +16,10 @@ module MoneyTree
       @public_key = opts[:public_key]
       @chain_code = opts[:chain_code]
       @parent = opts[:parent]
+    end
+    
+    def is_private?
+      is_private == true
     end
     
     def index_hex(i = index)
@@ -28,14 +34,14 @@ module MoneyTree
       depth.to_s(16).rjust(2, "0")
     end
     
-    def private_derivation_private_key_message(i)
+    def private_derivation_message(i)
       "\x00" + private_key.to_bytes + i_as_bytes(i)
     end
     
-    def public_derivation_private_key_message(i)
+    def public_derivation_message(i)
       public_key.to_bytes << i_as_bytes(i)
     end
-    
+        
     # TODO: Complete public key derivation message
     # def public_derivation_public_key_message(i)
     #   public_key.to_bytes + i_as_bytes(i)
@@ -46,14 +52,27 @@ module MoneyTree
     end
     
     def derive_private_key(i = 0)
-      message = i >= 0x80000000 ? private_derivation_private_key_message(i) : public_derivation_private_key_message(i)
+      message = i >= 0x80000000 ? private_derivation_message(i) : public_derivation_message(i)
       hash = hmac_sha512 int_to_bytes(chain_code), message
       left_int = left_from_hash(hash)
-      raise InvalidKeyForIndex if left_int >= MoneyTree::Key::ORDER # very low probability
+      raise InvalidKeyForIndex, 'greater than or equal to order' if left_int >= MoneyTree::Key::ORDER # very low probability
       child_private_key = (left_int + private_key.to_i) % MoneyTree::Key::ORDER
-      raise InvalidKeyForIndex if child_private_key == 0 # very low probability
+      raise InvalidKeyForIndex, 'equal to zero' if child_private_key == 0 # very low probability
       child_chain_code = right_from_hash(hash)
       return child_private_key, child_chain_code
+    end
+    
+    def derive_public_key(i = 0)
+      raise PrivatePublicMismatch if i >= 0x80000000
+      message = public_derivation_message(i)
+      hash = hmac_sha512 int_to_bytes(chain_code), message
+      left_int = left_from_hash(hash)
+      raise InvalidKeyForIndex, 'greater than or equal to order' if left_int >= MoneyTree::Key::ORDER # very low probability
+      bn = BN.new((left_int + public_key.to_i).to_s)
+      child_public_key = public_key.group.generator.mul bn
+      raise InvalidKeyForIndex, 'at infinity' if child_public_key.to_bn.to_i == 1/0.0 # very low probability
+      child_chain_code = right_from_hash(hash)
+      return child_public_key, child_chain_code
     end
     
     def left_from_hash(hash)
@@ -76,25 +95,31 @@ module MoneyTree
     # end
     
     def to_serialized_hex(type = :public)
+      raise PrivatePublicMismatch if type.to_sym == :private && private_key.nil?
       version_key = type.to_sym == :private ? :extended_privkey_version : :extended_pubkey_version
       hex = MoneyTree::NETWORKS[:bitcoin][version_key] # version (4 bytes)
       hex += depth_hex(depth) # depth (1 byte)
       hex += depth.zero? ? '00000000' : parent.to_fingerprint# fingerprint of key (4 bytes)
       hex += index_hex(index) # child number i (4 bytes)
       hex += chain_code_hex
-      hex += type.to_sym == :private ? "00#{private_key.to_hex}" : public_key.to_hex
+      hex += if type.to_sym == :private
+        "00#{private_key.to_hex}"
+      else
+        public_key.compressed.to_hex
+      end
     end
     
     def to_serialized_address(type = :public)
+      raise PrivatePublicMismatch if type.to_sym == :private && private_key.nil?
       to_serialized_base58 to_serialized_hex(type)
     end
     
     def to_identifier
-      public_key.to_ripemd160
+      public_key.compressed.to_ripemd160
     end
     
     def to_fingerprint
-      public_key.to_fingerprint
+      public_key.compressed.to_fingerprint
     end
     
     def to_address
@@ -104,15 +129,21 @@ module MoneyTree
     
     def subnode(i = 0, opts = {})
       # opts[:as_private] = is_private? unless opts[:as_private] == false
-      child_private_key, child_chain_code = derive_private_key(i)
-      child_private_key = MoneyTree::PrivateKey.new key: child_private_key
-      child_public_key = MoneyTree::PublicKey.new child_private_key
+      if private_key.nil?
+        child_public_key, child_chain_code = derive_public_key(i)
+        child_public_key = MoneyTree::PublicKey.new child_public_key.to_bn.to_i
+      else
+        child_private_key, child_chain_code = derive_private_key(i)
+        child_private_key = MoneyTree::PrivateKey.new key: child_private_key
+        child_public_key = MoneyTree::PublicKey.new child_private_key
+      end
+        
       index = i 
       
       MoneyTree::Node.new depth: depth+1, 
                                 index: i, 
                                 is_private: i >= 0x80000000 || i < 0,
-                                private_key: child_private_key,
+                                private_key: private_key.nil? ? nil : child_private_key,
                                 public_key: child_public_key,
                                 chain_code: child_chain_code,
                                 parent: self
@@ -182,26 +213,32 @@ module MoneyTree
       @depth = 0
       @index = 0
       @is_private = true
-      @seed_generation_attempt = 0
       opts[:seed] = [opts[:seed_hex]].pack("H*") if opts[:seed_hex]
       if opts[:seed]
         @seed = opts[:seed]
         @seed_hash = generate_seed_hash(@seed)
         raise SeedGeneration::ImportError unless seed_valid?(@seed_hash)
+        set_seeded_keys
+      elsif opts[:private_key] || opts[:public_key]
+        raise ImportError, 'chain code required' unless opts[:chain_code]
+        @chain_code = opts[:chain_code]
+        if opts[:private_key]
+          @private_key = opts[:private_key]
+          @public_key = MoneyTree::PublicKey.new @private_key
+        else opts[:public_key]
+          @public_key = opts[:public_key]
+          @is_private = false
+        end
       else
-        generate_seed_until_valid
+        generate_seed
+        set_seeded_keys
       end
-      set_master_keys
-    end
-    
-    def generate_seed_until_valid
-      @seed = generate_seed
-      @seed_hash = generate_seed_hash(@seed)
-      raise SeedGeneration::ValidityError unless seed_valid?(@seed_hash)
     end
     
     def generate_seed
-      OpenSSL::Random.random_bytes(32)
+      @seed = OpenSSL::Random.random_bytes(32)
+      @seed_hash = generate_seed_hash(@seed)
+      raise SeedGeneration::ValidityError unless seed_valid?(@seed_hash)
     end
     
     def generate_seed_hash(seed)
@@ -214,7 +251,7 @@ module MoneyTree
       !master_key.zero? && master_key < MoneyTree::Key::ORDER
     end
     
-    def set_master_keys
+    def set_seeded_keys
       @private_key = MoneyTree::PrivateKey.new key: left_from_hash(seed_hash)
       @chain_code = right_from_hash(seed_hash)
       @public_key = MoneyTree::PublicKey.new @private_key

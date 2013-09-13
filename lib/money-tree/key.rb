@@ -14,7 +14,7 @@ module MoneyTree
     class InvalidWIFFormat < Exception; end
     class InvalidBase64Format < Exception; end
     
-    attr_reader :options, :key
+    attr_reader :options, :key, :raw_key
     attr_accessor :ec_key
     
     GROUP_NAME = 'secp256k1'
@@ -35,13 +35,11 @@ module MoneyTree
   end
   
   class PrivateKey < Key
-    
-    attr_reader :raw_key
-    
+        
     def initialize(opts = {})
       @options = opts
       # @ec_key = EC_KEY_new_by_curve_name(NID_secp256k1)
-      @ec_key = PKey::EC.new 'secp256k1'
+      @ec_key = PKey::EC.new GROUP_NAME
       if @options[:key]
         @raw_key = @options[:key]
         @key = parse_raw_key
@@ -154,46 +152,103 @@ module MoneyTree
   end
   
   class PublicKey < Key
-    attr_reader :private_key
+    attr_reader :private_key, :point, :group, :key_int
     
     def initialize(p_key, opts = {})
-      raise "Must initialize with a MoneyTree::PrivateKey" unless p_key.is_a?(PrivateKey)
-      @private_key = p_key
-      @ec_key = @private_key.ec_key
       @options = opts
-      @key = @options[:key] || to_hex
+      @options[:compressed] = true if @options[:compressed].nil?
+      
+      if p_key.is_a?(PrivateKey)
+        @private_key = p_key
+        @point = @private_key.calculate_public_key(@options)
+        @group = @point.group
+        @key = @raw_key = to_hex
+      else
+        @raw_key = p_key
+        @group = PKey::EC::Group.new GROUP_NAME
+        @key = parse_raw_key
+        # set_point
+      end
+      raise ArgumentError, "Must initialize with a MoneyTree::PrivateKey or a public key value" if @key.nil?
     end
     
-    def to_hex(opts = {})
-      int_to_hex to_i(opts)
+    def compression
+      @group.point_conversion_form
     end
     
-    def to_i(opts = {})
-      private_key.calculate_public_key(opts).to_bn.to_i
+    def compression=(compression_type = :compressed)
+      @group.point_conversion_form = compression_type
     end
     
-    def to_ripemd160(opts = {})
-      hash = sha256 to_hex(opts)
+    def compressed
+      compressed_key = self.dup
+      compressed_key.set_point to_i, compressed: true
+      compressed_key
+    end
+    
+    def uncompressed
+      uncompressed_key = self.dup
+      uncompressed_key.set_point to_i, compressed: false
+      uncompressed_key
+    end
+    
+    def set_point(int = to_i, opts = {})
+      opts = options.merge(opts)
+      opts[:compressed] = true if opts[:compressed].nil?
+      self.compression = opts[:compressed] ? :compressed : :uncompressed
+      bn = BN.new int_to_hex(int), 16
+      @point = PKey::EC::Point.new group, bn
+      raise KeyInvalid, 'point is not on the curve' unless @point.on_curve?
+    end
+    
+    def parse_raw_key
+      result = if raw_key.is_a?(Bignum)
+        set_point raw_key
+      elsif hex_format?
+        set_point hex_to_int(raw_key), compressed: false
+      elsif compressed_hex_format?
+        set_point hex_to_int(raw_key), compressed: true
+      else 
+        raise KeyFormatNotFound
+      end
+      to_hex
+    end
+    
+    def hex_format?
+      raw_key.length == 130 && !raw_key[/\H/]
+    end
+    
+    def compressed_hex_format?
+      raw_key.length == 66 && !raw_key[/\H/]
+    end
+    
+    def to_hex
+      int_to_hex to_i
+    end
+    
+    def to_i
+      point.to_bn.to_i
+    end
+    
+    def to_ripemd160
+      hash = sha256 to_hex
       ripemd160 hash
     end
     
-    def to_address(opts = {})
-      hash = to_ripemd160(opts)
+    def to_address
+      hash = to_ripemd160
       address = MoneyTree::NETWORKS[:bitcoin][:address_version] + hash
       to_serialized_base58 address
     end
+    alias :to_s :to_address
     
-    def to_fingerprint(opts = {})
-      hash = to_ripemd160(opts)
+    def to_fingerprint
+      hash = to_ripemd160
       hash.slice(0..7)
     end
-
-    def to_s(opts = {})
-      to_address(opts)
-    end
     
-    def to_bytes(opts = {})
-      int_to_bytes to_i(opts)
+    def to_bytes
+      int_to_bytes to_i
     end
   end
 end
