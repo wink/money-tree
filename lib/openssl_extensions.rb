@@ -31,7 +31,7 @@ module MoneyTree
       point_1_pt = EC_POINT_hex2point(group, point_1_hex, nil, nil)
 
       sum_point = EC_POINT_new(group)
-      success = EC_POINT_add(group, sum_point, point_0_pt, point_1_pt, nil)#BN_CTX_new())
+      success = EC_POINT_add(group, sum_point, point_0_pt, point_1_pt, nil)
       hex = EC_POINT_point2hex(group, sum_point, POINT_CONVERSION_UNCOMPRESSED, nil)
       EC_KEY_free(eckey)
       EC_POINT_free(sum_point)
