@@ -1,3 +1,4 @@
+require "openssl_extensions"
 require "money-tree/version"
 require "money-tree/support"
 require "money-tree/networks"

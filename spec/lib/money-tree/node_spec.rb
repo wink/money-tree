@@ -352,7 +352,7 @@ describe MoneyTree::Master do
 
         describe "M/0 (testing import of public key)" do
           before do
-            @master = MoneyTree::Master.new public_key: @master.public_key, chain_code: @master.chain_code
+            @master = MoneyTree::Master.new public_key: "03cbcaa9c98c877a26977d00825c956a238e8dddfbd322cce4f74b0b5bd6ace4a7", chain_code: @master.chain_code
             @node = @master.node_for_path "M/0"
           end
         

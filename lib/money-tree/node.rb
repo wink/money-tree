@@ -41,12 +41,7 @@ module MoneyTree
     def public_derivation_message(i)
       public_key.to_bytes << i_as_bytes(i)
     end
-        
-    # TODO: Complete public key derivation message
-    # def public_derivation_public_key_message(i)
-    #   public_key.to_bytes + i_as_bytes(i)
-    # end
-    
+
     def i_as_bytes(i)
       [i].pack('N')
     end
@@ -68,9 +63,9 @@ module MoneyTree
       hash = hmac_sha512 int_to_bytes(chain_code), message
       left_int = left_from_hash(hash)
       raise InvalidKeyForIndex, 'greater than or equal to order' if left_int >= MoneyTree::Key::ORDER # very low probability
-      bn = BN.new((left_int + public_key.to_i).to_s)
-      child_public_key = public_key.group.generator.mul bn
-      raise InvalidKeyForIndex, 'at infinity' if child_public_key.to_bn.to_i == 1/0.0 # very low probability
+      factor = BN.new left_int.to_s
+      child_public_key = public_key.uncompressed.group.generator.mul(factor).add(public_key.uncompressed.point).to_bn.to_i
+      raise InvalidKeyForIndex, 'at infinity' if child_public_key == 1/0.0 # very low probability
       child_chain_code = right_from_hash(hash)
       return child_public_key, child_chain_code
     end
@@ -131,7 +126,7 @@ module MoneyTree
       # opts[:as_private] = is_private? unless opts[:as_private] == false
       if private_key.nil?
         child_public_key, child_chain_code = derive_public_key(i)
-        child_public_key = MoneyTree::PublicKey.new child_public_key.to_bn.to_i
+        child_public_key = MoneyTree::PublicKey.new child_public_key
       else
         child_private_key, child_chain_code = derive_private_key(i)
         child_private_key = MoneyTree::PrivateKey.new key: child_private_key
@@ -141,12 +136,12 @@ module MoneyTree
       index = i 
       
       MoneyTree::Node.new depth: depth+1, 
-                                index: i, 
-                                is_private: i >= 0x80000000 || i < 0,
-                                private_key: private_key.nil? ? nil : child_private_key,
-                                public_key: child_public_key,
-                                chain_code: child_chain_code,
-                                parent: self
+                          index: i, 
+                          is_private: i >= 0x80000000 || i < 0,
+                          private_key: private_key.nil? ? nil : child_private_key,
+                          public_key: child_public_key,
+                          chain_code: child_chain_code,
+                          parent: self
     end
     
     # path: a path of subkeys denoted by numbers and slashes. Use
@@ -226,7 +221,7 @@ module MoneyTree
           @private_key = opts[:private_key]
           @public_key = MoneyTree::PublicKey.new @private_key
         else opts[:public_key]
-          @public_key = opts[:public_key]
+          @public_key = opts[:public_key].is_a?(MoneyTree::PublicKey) ? opts[:public_key] : MoneyTree::PublicKey.new(opts[:public_key])
           @is_private = false
         end
       else
