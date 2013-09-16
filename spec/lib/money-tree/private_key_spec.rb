@@ -7,8 +7,9 @@ describe MoneyTree::PrivateKey do
   end
   
   describe "to_hex" do
-    it "has 64 characters" do      
-      @key.to_hex.length.should == 64
+    it "has 62 - 64 characters" do
+      # could be only 31 bytes if key has leading zeros
+      [62, 64].should include(@key.to_hex.length)
     end
     
     it "is a valid hex" do
@@ -22,7 +23,7 @@ describe MoneyTree::PrivateKey do
     end
     
     it "starts with K or L" do
-      @key.to_wif[0].should == 'K'
+      %w(K L).should include(@key.to_wif[0])
     end
     
     it "is a valid compressed wif" do
