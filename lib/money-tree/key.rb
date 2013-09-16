@@ -38,7 +38,6 @@ module MoneyTree
         
     def initialize(opts = {})
       @options = opts
-      # @ec_key = EC_KEY_new_by_curve_name(NID_secp256k1)
       @ec_key = PKey::EC.new GROUP_NAME
       if @options[:key]
         @raw_key = @options[:key]
@@ -167,7 +166,6 @@ module MoneyTree
         @raw_key = p_key
         @group = PKey::EC::Group.new GROUP_NAME
         @key = parse_raw_key
-        # set_point
       end
       raise ArgumentError, "Must initialize with a MoneyTree::PrivateKey or a public key value" if @key.nil?
     end
