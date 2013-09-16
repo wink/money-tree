@@ -109,6 +109,51 @@ describe MoneyTree::Master do
             @node.to_serialized_address.should == "xpub68Gmy5EdvgibQVfPdqkBBCHxA5htiqg55crXYuXoQRKfDBFA1WEjWgP6LHhwBZeNK1VTsfTFUHCdrfp1bgwQ9xv5ski8PX9rL2dZXvgGDnw"
           end
         end
+        
+        describe "m/0p.pub" do
+          before do
+            @node = @master.node_for_path "m/0p.pub"
+          end
+        
+          it "has an index of 2147483648" do
+            @node.index.should == 2147483648
+          end
+          
+          it "is private" do
+            @node.is_private.should == true
+          end
+        
+          it "has a depth of 1" do
+            @node.depth.should == 1
+          end
+    
+          it "generates subnode" do
+            @node.to_identifier.should == "5c1bd648ed23aa5fd50ba52b2457c11e9e80a6a7"
+            @node.to_fingerprint.should == "5c1bd648"
+            @node.to_address.should == "19Q2WoS5hSS6T8GjhK8KZLMgmWaq4neXrh"
+          end
+    
+          it "does not generate a private key" do
+            @node.private_key.should be_nil
+          end
+    
+          it "generates a public key" do
+            @node.public_key.to_hex.should == "035a784662a4a20a65bf6aab9ae98a6c068a81c52e4b032c0fb5400c706cfccc56"
+          end
+        
+          it "generates a chain code" do
+            @node.chain_code_hex.should == "47fdacbd0f1097043b78c63c20c34ef4ed9a111d980047ad16282c7ae6236141"
+          end
+        
+          it "does not generate a serialized private key" do
+            lambda { @node.to_serialized_hex(:private) }.should raise_error(MoneyTree::Node::PrivatePublicMismatch)
+          end
+              
+          it "generates a serialized public_key" do
+            @node.to_serialized_hex.should == "0488b21e013442193e8000000047fdacbd0f1097043b78c63c20c34ef4ed9a111d980047ad16282c7ae6236141035a784662a4a20a65bf6aab9ae98a6c068a81c52e4b032c0fb5400c706cfccc56"
+            @node.to_serialized_address.should == "xpub68Gmy5EdvgibQVfPdqkBBCHxA5htiqg55crXYuXoQRKfDBFA1WEjWgP6LHhwBZeNK1VTsfTFUHCdrfp1bgwQ9xv5ski8PX9rL2dZXvgGDnw"
+          end
+        end
       
         describe "m/0'/1" do
           before do
@@ -149,6 +194,51 @@ describe MoneyTree::Master do
           it "generates a serialized private key" do
             @node.to_serialized_hex(:private).should == "0488ade4025c1bd648000000012a7857631386ba23dacac34180dd1983734e444fdbf774041578e9b6adb37c19003c6cb8d0f6a264c91ea8b5030fadaa8e538b020f0a387421a12de9319dc93368"
             @node.to_serialized_address(:private).should == "xprv9wTYmMFdV23N2TdNG573QoEsfRrWKQgWeibmLntzniatZvR9BmLnvSxqu53Kw1UmYPxLgboyZQaXwTCg8MSY3H2EU4pWcQDnRnrVA1xe8fs"
+          end
+                
+          it "generates a serialized public_key" do
+            @node.to_serialized_hex.should == "0488b21e025c1bd648000000012a7857631386ba23dacac34180dd1983734e444fdbf774041578e9b6adb37c1903501e454bf00751f24b1b489aa925215d66af2234e3891c3b21a52bedb3cd711c"
+            @node.to_serialized_address.should == "xpub6ASuArnXKPbfEwhqN6e3mwBcDTgzisQN1wXN9BJcM47sSikHjJf3UFHKkNAWbWMiGj7Wf5uMash7SyYq527Hqck2AxYysAA7xmALppuCkwQ"
+          end
+        end
+        
+        describe "M/0'/1" do
+          before do
+            @node = @master.node_for_path "M/0'/1"
+          end
+        
+          it "has an index of 1" do
+            @node.index.should == 1
+          end
+          
+          it "is public" do
+            @node.is_private.should == false
+          end
+        
+          it "has a depth of 2" do
+            @node.depth.should == 2
+          end
+          
+          it "generates subnode" do
+            @node.to_identifier.should == "bef5a2f9a56a94aab12459f72ad9cf8cf19c7bbe"
+            @node.to_fingerprint.should == "bef5a2f9"
+            @node.to_address.should == "1JQheacLPdM5ySCkrZkV66G2ApAXe1mqLj"
+          end
+              
+          it "does not generate a private key" do
+            @node.private_key.should be_nil
+          end
+              
+          it "generates a public key" do
+            @node.public_key.to_hex.should == "03501e454bf00751f24b1b489aa925215d66af2234e3891c3b21a52bedb3cd711c"
+          end
+        
+          it "generates a chain code" do
+            @node.chain_code_hex.should == "2a7857631386ba23dacac34180dd1983734e444fdbf774041578e9b6adb37c19"
+          end
+        
+          it "generates a serialized private key" do
+            lambda { @node.to_serialized_hex(:private) }.should raise_error(MoneyTree::Node::PrivatePublicMismatch)
           end
                 
           it "generates a serialized public_key" do

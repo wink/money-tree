@@ -132,9 +132,7 @@ module MoneyTree
         child_private_key = MoneyTree::PrivateKey.new key: child_private_key
         child_public_key = MoneyTree::PublicKey.new child_private_key
       end
-        
-      index = i 
-      
+            
       MoneyTree::Node.new depth: depth+1, 
                           index: i, 
                           is_private: i >= 0x80000000 || i < 0,
@@ -157,7 +155,7 @@ module MoneyTree
     # You should choose either the p or the negative number convention for private key derivation.
     def node_for_path(path)
       force_public = path[-4..-1] == '.pub'
-      path = path[0..-4] if force_public
+      path = path[0..-5] if force_public
       parts = path.split('/')
       nodes = []
       parts.each_with_index do |part, depth|
@@ -168,7 +166,13 @@ module MoneyTree
           nodes << nodes.last.subnode(i)
         end
       end
-      nodes.last
+      if force_public or parts.first == 'M'
+        node = nodes.last
+        node.strip_private_info!
+        node
+      else
+        nodes.last
+      end
     end
     
     def parse_index(path_part)
@@ -182,6 +186,10 @@ module MoneyTree
       else
         i & 0x7fffffff
       end
+    end
+    
+    def strip_private_info!
+      @private_key = nil
     end
     
     def chain_code_hex
@@ -222,7 +230,6 @@ module MoneyTree
           @public_key = MoneyTree::PublicKey.new @private_key
         else opts[:public_key]
           @public_key = opts[:public_key].is_a?(MoneyTree::PublicKey) ? opts[:public_key] : MoneyTree::PublicKey.new(opts[:public_key])
-          @is_private = false
         end
       else
         generate_seed

@@ -9,15 +9,15 @@ describe MoneyTree::PublicKey do
       @key = MoneyTree::PublicKey.new @private_key
     end
   
-    # describe "to_hex(compressed: false)" do
-    #   it "has 65 bytes" do
-    #     @key.uncompressed.to_hex.length.should == 130
-    #   end
-    # 
-    #   it "is a valid hex" do
-    #     @key.uncompressed.to_hex.should == '042dfc2557a007c93092c2915f11e8aa70c4f399a6753e2e908330014091580e4b11203096f1a1c5276a73f91b9465357004c2103cc42c63d6d330df589080d2e4'      
-    #   end
-    # end
+    describe "to_hex(compressed: false)" do
+      it "has 65 bytes" do
+        @key.uncompressed.to_hex.length.should == 130
+      end
+    
+      it "is a valid hex" do
+        @key.uncompressed.to_hex.should == '042dfc2557a007c93092c2915f11e8aa70c4f399a6753e2e908330014091580e4b11203096f1a1c5276a73f91b9465357004c2103cc42c63d6d330df589080d2e4'      
+      end
+    end
   
     describe "to_hex" do
       it "has 33 bytes" do
@@ -35,15 +35,15 @@ describe MoneyTree::PublicKey do
       end
     end
   
-    # describe "to_address(compressed: false)" do
-    #   it "has 34 characters" do
-    #     @key.uncompressed.to_address.length.should == 34
-    #   end
-    # 
-    #   it "is a valid bitcoin address" do
-    #     @key.uncompressed.to_address.should == '133bJA2xoVqBUsiR3uSkciMo5r15fLAaZg'      
-    #   end
-    # end
+    describe "to_address(compressed: false)" do
+      it "has 34 characters" do
+        @key.uncompressed.to_address.length.should == 34
+      end
+    
+      it "is a valid bitcoin address" do
+        @key.uncompressed.to_address.should == '133bJA2xoVqBUsiR3uSkciMo5r15fLAaZg'      
+      end
+    end
   
     describe "to_compressed_address" do
       it "has 34 characters" do
@@ -61,15 +61,15 @@ describe MoneyTree::PublicKey do
       @key = MoneyTree::PublicKey.new '042dfc2557a007c93092c2915f11e8aa70c4f399a6753e2e908330014091580e4b11203096f1a1c5276a73f91b9465357004c2103cc42c63d6d330df589080d2e4'
     end
     
-    # describe "to_hex(compressed: false)" do
-    #   it "has 65 bytes" do
-    #     @key.uncompressed.to_hex.length.should == 130
-    #   end
-    # 
-    #   it "is a valid hex" do
-    #     @key.uncompressed.to_hex.should == '042dfc2557a007c93092c2915f11e8aa70c4f399a6753e2e908330014091580e4b11203096f1a1c5276a73f91b9465357004c2103cc42c63d6d330df589080d2e4'      
-    #   end
-    # end
+    describe "to_hex(compressed: false)" do
+      it "has 65 bytes" do
+        @key.uncompressed.to_hex.length.should == 130
+      end
+    
+      it "is a valid hex" do
+        @key.uncompressed.to_hex.should == '042dfc2557a007c93092c2915f11e8aa70c4f399a6753e2e908330014091580e4b11203096f1a1c5276a73f91b9465357004c2103cc42c63d6d330df589080d2e4'      
+      end
+    end
   
     describe "to_hex" do
       it "has 33 bytes" do
@@ -87,15 +87,15 @@ describe MoneyTree::PublicKey do
       end
     end
   
-    # describe "to_address(compressed: false)" do
-    #   it "has 34 characters" do
-    #     @key.uncompressed.to_address.length.should == 34
-    #   end
-    # 
-    #   it "is a valid bitcoin address" do
-    #     @key.uncompressed.to_address.should == '133bJA2xoVqBUsiR3uSkciMo5r15fLAaZg'      
-    #   end
-    # end
+    describe "to_address(compressed: false)" do
+      it "has 34 characters" do
+        @key.uncompressed.to_address.length.should == 34
+      end
+    
+      it "is a valid bitcoin address" do
+        @key.uncompressed.to_address.should == '133bJA2xoVqBUsiR3uSkciMo5r15fLAaZg'      
+      end
+    end
   
     describe "to_compressed_address" do
       it "has 34 characters" do
