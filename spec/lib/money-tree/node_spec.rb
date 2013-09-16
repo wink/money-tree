@@ -26,7 +26,7 @@ describe MoneyTree::Master do
           end
           
           it "is private" do
-            @master.is_private.should == true
+            @master.is_private?.should == true
           end
         
           it "has a depth of 0" do
@@ -73,7 +73,7 @@ describe MoneyTree::Master do
           end
           
           it "is private" do
-            @node.is_private.should == true
+            @node.is_private?.should == true
           end
         
           it "has a depth of 1" do
@@ -120,7 +120,7 @@ describe MoneyTree::Master do
           end
           
           it "is private" do
-            @node.is_private.should == true
+            @node.is_private?.should == true
           end
         
           it "has a depth of 1" do
@@ -165,7 +165,7 @@ describe MoneyTree::Master do
           end
           
           it "is public" do
-            @node.is_private.should == false
+            @node.is_private?.should == false
           end
         
           it "has a depth of 2" do
@@ -212,7 +212,7 @@ describe MoneyTree::Master do
           end
           
           it "is public" do
-            @node.is_private.should == false
+            @node.is_private?.should == false
           end
         
           it "has a depth of 2" do
@@ -257,7 +257,7 @@ describe MoneyTree::Master do
           end
           
           it "is public" do
-            @node.is_private.should == false
+            @node.is_private?.should == false
           end
         
           it "has a depth of 4" do
@@ -304,7 +304,7 @@ describe MoneyTree::Master do
           end
           
           it "is public" do
-            @node.is_private.should == false
+            @node.is_private?.should == false
           end
         
           it "has a depth of 2" do
@@ -359,7 +359,7 @@ describe MoneyTree::Master do
           end
           
           it "is private" do
-            @master.is_private.should == true
+            @master.is_private?.should == true
           end
           
           it "generates master node (Master)" do
@@ -407,7 +407,7 @@ describe MoneyTree::Master do
           end
           
           it "is public" do
-            @node.is_private.should == false
+            @node.is_private?.should == false
           end
     
           it "generates subnode" do
@@ -455,7 +455,7 @@ describe MoneyTree::Master do
           end
           
           it "is public" do
-            @node.is_private.should == false
+            @node.is_private?.should == false
           end
             
           it "generates subnode" do
@@ -501,7 +501,7 @@ describe MoneyTree::Master do
           end
           
           it "is private" do
-            @node.is_private.should == true
+            @node.is_private?.should == true
           end
             
           it "generates subnode" do
@@ -548,7 +548,7 @@ describe MoneyTree::Master do
           end
           
           it "is private" do
-            @node.is_private.should == false
+            @node.is_private?.should == false
           end
             
           it "generates subnode" do
@@ -595,7 +595,7 @@ describe MoneyTree::Master do
           end
           
           it "is private" do
-            @node.is_private.should == true
+            @node.is_private?.should == true
           end
             
           it "generates subnode" do
@@ -642,7 +642,7 @@ describe MoneyTree::Master do
           end
           
           it "is public" do
-            @node.is_private.should == false
+            @node.is_private?.should == false
           end
             
           it "generates subnode" do
@@ -688,7 +688,7 @@ describe MoneyTree::Master do
       end
       
       it "is public" do
-        @node.is_private.should == true
+        @node.is_private?.should == true
       end
     
       it "has a depth of 2" do
@@ -696,13 +696,37 @@ describe MoneyTree::Master do
       end
       
       it "generates a serialized private key" do
-        @node.to_serialized_hex(:private).should == "0488ade4025c1bd648ffffffffeb8291afea1716eb01a1ce7e00d1843072cbd227309df728ba4015f73d5344aa00d9bd1df2ae56b5be763ddd393573497a8075352bda4aad9ea9083e4c0b1081ac"
-        @node.to_serialized_address(:private).should == "xprv9wTYmMFvAM7JKr2H3xMXcBNzPsqKgffzsM2XnrvKQLJQo2qRftY4uspJCAqjvPypq6Rgvkpoen8MGGnNBxYdeYR5jt6VFdL8cGp2qKnukbW"
+        @node.to_serialized_hex(:private).should == "0488ade4025c1bd648ffffffff0f9ca680ee23c81a305d96b86f811947e65590200b6f74d66ecf83936313a9c900235893db08ad0efc6ae4a1eac5b31a90a7d0906403d139d4d7f3c6796fb42c4e"
+        @node.to_serialized_address(:private).should == "xprv9wTYmMFvAM7JHf3RuUidc24a4y2t4gN7aNP5ABreWAqt6BUBcf6xE8RNQxj2vUssYWM8iAZiZi5H1fmKkkpXjtwDCDv1pg8fSfQMk9rhHYt"
       end
           
       it "generates a serialized public_key" do
-        @node.to_serialized_hex.should == "0488b21e025c1bd648ffffffffeb8291afea1716eb01a1ce7e00d1843072cbd227309df728ba4015f73d5344aa02bcd68031f49f6c921e24ed8c1774221433de23eb309709f571d5449909405cfc"
-        @node.to_serialized_address.should == "xpub6ASuArnozifbYL6k9ytXyKKiwufp68PrEZx8bFKvxfqPfqAaDRrKTg8n3Ren8WFSpAbbWLGTimcfYkUB2JbyYFToRBdKT6pEhmpyVe3AqZ9"
+        @node.to_serialized_hex.should == "0488b21e025c1bd648ffffffff0f9ca680ee23c81a305d96b86f811947e65590200b6f74d66ecf83936313a9c902adb7979a5e99bf8acdfec3680bf482feac9898b28808c22d47db62e98de5d3fa"
+        @node.to_serialized_address.should == "xpub6ASuArnozifbW97u1WFdyA1JczsNU95xwbJfxaGG4WNrxyoLACRCmvjrGEojsRsoZULf5FyZXv6AWAtce2UErsshvkpjNaT1fP6sMgTZdc1"
+      end
+    end
+    
+    describe "importing node" do
+      describe ".from_serialized_address(address)" do
+        it "imports a valid private node address" do
+          @node = MoneyTree::Node.from_serialized_address "xprv9uHRZZhk6KAJC1avXpDAp4MDc3sQKNxDiPvvkX8Br5ngLNv1TxvUxt4cV1rGL5hj6KCesnDYUhd7oWgT11eZG7XnxHrnYeSvkzY7d2bhkJ7"
+          @node.private_key.to_hex.should == "edb2e14f9ee77d26dd93b4ecede8d16ed408ce149b6cd80b0715a2d911a0afea"
+          @node.index.should == 2147483648
+          @node.is_private?.should == true
+          @node.depth.should == 1
+          @node.public_key.to_hex.should == "035a784662a4a20a65bf6aab9ae98a6c068a81c52e4b032c0fb5400c706cfccc56"
+          @node.chain_code_hex.should == "47fdacbd0f1097043b78c63c20c34ef4ed9a111d980047ad16282c7ae6236141"        
+        end
+        
+        it "imports a valid public node address" do
+          @node = MoneyTree::Node.from_serialized_address "xpub68Gmy5EdvgibQVfPdqkBBCHxA5htiqg55crXYuXoQRKfDBFA1WEjWgP6LHhwBZeNK1VTsfTFUHCdrfp1bgwQ9xv5ski8PX9rL2dZXvgGDnw"
+          @node.private_key.should be_nil
+          @node.index.should == 2147483648
+          @node.is_private?.should == true
+          @node.depth.should == 1
+          @node.public_key.to_hex.should == "035a784662a4a20a65bf6aab9ae98a6c068a81c52e4b032c0fb5400c706cfccc56"
+          @node.chain_code_hex.should == "47fdacbd0f1097043b78c63c20c34ef4ed9a111d980047ad16282c7ae6236141"
+        end
       end
     end
   end

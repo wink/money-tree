@@ -1,7 +1,7 @@
 module MoneyTree
   class Node
     include Support
-    attr_reader :private_key, :public_key, :chain_code, :is_private, :depth, :index, :parent
+    attr_reader :private_key, :public_key, :chain_code, :is_private, :depth, :index, :parent, :is_test
     
     class PublicDerivationFailure < Exception; end
     class InvalidKeyForIndex < Exception; end
@@ -9,17 +9,46 @@ module MoneyTree
     class PrivatePublicMismatch < Exception; end
     
     def initialize(opts = {})
-      @depth = opts[:depth]
-      @index = opts[:index]
-      @is_private = opts[:is_private]
-      @private_key = opts[:private_key]
-      @public_key = opts[:public_key]
-      @chain_code = opts[:chain_code]
-      @parent = opts[:parent]
+      opts.each { |k, v| instance_variable_set "@#{k}", v }
+    end
+    
+    def self.from_serialized_address(address)
+      hex = from_serialized_base58 address
+      version = from_version_hex hex.slice!(0..7)
+      opts = {}
+      opts[:is_test] = version[:test]
+      opts[:depth] = hex.slice!(0..1).to_i(16)
+      fingerprint = hex.slice!(0..7)
+      opts[:index] = hex.slice!(0..7).to_i(16)
+      opts[:chain_code] = hex.slice!(0..63).to_i(16)
+      if version[:private_key] && hex.slice(0..1) == '00'
+        opts[:private_key] = MoneyTree::PrivateKey.new key: hex.slice(2..-1)
+        opts[:public_key] = MoneyTree::PublicKey.new opts[:private_key]
+      elsif %w(02 03).include? hex.slice(0..1)
+        opts[:public_key] = MoneyTree::PublicKey.new hex
+      else
+        raise ImportError, 'Public or private key data does not match version type'
+      end
+      new opts
+    end
+    
+    def self.from_version_hex(hex)
+      case hex
+      when MoneyTree::NETWORKS[:bitcoin][:extended_privkey_version]
+        { private_key: true, test: false }
+      when MoneyTree::NETWORKS[:bitcoin][:extended_pubkey_version]
+        { private_key: false, test: false }
+      when MoneyTree::NETWORKS[:bitcoin_testnet][:extended_privkey_version]
+        { private_key: true, test: true }
+      when MoneyTree::NETWORKS[:bitcoin_testnet][:extended_pubkey_version]
+        { private_key: false, test: true }
+      else 
+        raise ImportError, 'invalid version bytes'
+      end
     end
     
     def is_private?
-      is_private == true
+      index >= 0x80000000 || index < 0
     end
     
     def index_hex(i = index)
@@ -47,7 +76,7 @@ module MoneyTree
     end
     
     def derive_private_key(i = 0)
-      message = i >= 0x80000000 ? private_derivation_message(i) : public_derivation_message(i)
+      message = i >= 0x80000000 || i < 0 ? private_derivation_message(i) : public_derivation_message(i)
       hash = hmac_sha512 int_to_bytes(chain_code), message
       left_int = left_from_hash(hash)
       raise InvalidKeyForIndex, 'greater than or equal to order' if left_int >= MoneyTree::Key::ORDER # very low probability
@@ -78,17 +107,6 @@ module MoneyTree
       bytes_to_int hash.bytes.to_a[32..-1]
     end
 
-    # TODO: Complete public key derivation
-    # def derive_public_key(i = 0, opts = {})
-    #   raise PublicDerivationFailure unless i < 0x80000000
-    #   hash = hmac_sha512([chain_code].pack("H*"), public_key.to_hex + index_hex(i))
-    #   temp_key = MoneyTree::PrivateKey.new key: hash[0..63]
-    #   temp_pub_key = MoneyTree::PublicKey.new temp_key
-    #   child_public_key = (temp_key.to_hex.to_i(16) + temp_pub_key.to_hex.to_i(16))
-    #   child_chain_code = hash[64..-1]
-    #   return child_public_key, child_chain_code
-    # end
-    
     def to_serialized_hex(type = :public)
       raise PrivatePublicMismatch if type.to_sym == :private && private_key.nil?
       version_key = type.to_sym == :private ? :extended_privkey_version : :extended_pubkey_version
@@ -123,7 +141,6 @@ module MoneyTree
     end
     
     def subnode(i = 0, opts = {})
-      # opts[:as_private] = is_private? unless opts[:as_private] == false
       if private_key.nil?
         child_public_key, child_chain_code = derive_public_key(i)
         child_public_key = MoneyTree::PublicKey.new child_public_key
@@ -135,7 +152,6 @@ module MoneyTree
             
       MoneyTree::Node.new depth: depth+1, 
                           index: i, 
-                          is_private: i >= 0x80000000 || i < 0,
                           private_key: private_key.nil? ? nil : child_private_key,
                           public_key: child_public_key,
                           chain_code: child_chain_code,
@@ -215,7 +231,6 @@ module MoneyTree
     def initialize(opts = {})
       @depth = 0
       @index = 0
-      @is_private = true
       opts[:seed] = [opts[:seed_hex]].pack("H*") if opts[:seed_hex]
       if opts[:seed]
         @seed = opts[:seed]
@@ -235,6 +250,10 @@ module MoneyTree
         generate_seed
         set_seeded_keys
       end
+    end
+    
+    def is_private?
+      true
     end
     
     def generate_seed

@@ -49,6 +49,14 @@ module MoneyTree
       encode_base58 address
     end
     
+    def from_serialized_base58(base58)
+      hex = decode_base58 base58
+      checksum = hex.slice!(-8..-1)
+      compare_checksum = sha256(sha256(hex)).slice(0..7)
+      raise EncodingError unless checksum == compare_checksum
+      hex
+    end
+    
     def digestify(digest_type, source, opts = {})
       source = [source].pack("H*") unless opts[:ascii]
       bytes_to_hex Digest.digest(digest_type, source)
@@ -81,8 +89,6 @@ module MoneyTree
     end
     
     def bytes_to_int(bytes, base = 16)
-      # bytes = bytes.bytes unless bytes.respond_to?(:inject)
-      # bytes.inject {|a, b| (a << 8) + b }
       if bytes.is_a?(Array)
         bytes = bytes.pack("C*")
       end

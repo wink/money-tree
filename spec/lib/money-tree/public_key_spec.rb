@@ -106,5 +106,20 @@ describe MoneyTree::PublicKey do
         @key.compressed.to_address.should == '13uVqa35BMo4mYq9LiZrXVzoz9EFZ6aoXe'      
       end
     end
+    
+    describe "#compression" do
+      it "returns current compression setting" do
+        @key.compression = :uncompressed
+        @key.compression.should == :uncompressed
+        @key.compression = :compressed
+        @key.compression.should == :compressed
+      end
+    end
+  end
+  
+  describe "with a bad key" do
+    it "raises KeyFormatNotFound" do
+      lambda { @key = MoneyTree::PublicKey.new 'THISISNOTAVALIDKEY' }.should raise_error(MoneyTree::Key::KeyFormatNotFound)
+    end
   end
 end
