@@ -115,11 +115,7 @@ module MoneyTree
       hex += depth.zero? ? '00000000' : parent.to_fingerprint# fingerprint of key (4 bytes)
       hex += index_hex(index) # child number i (4 bytes)
       hex += chain_code_hex
-      hex += if type.to_sym == :private
-        "00#{private_key.to_hex}"
-      else
-        public_key.compressed.to_hex
-      end
+      hex += type.to_sym == :private ? "00#{private_key.to_hex}" : public_key.compressed.to_hex
     end
     
     def to_serialized_address(type = :public)
