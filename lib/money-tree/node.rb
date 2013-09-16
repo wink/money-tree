@@ -15,21 +15,24 @@ module MoneyTree
     def self.from_serialized_address(address)
       hex = from_serialized_base58 address
       version = from_version_hex hex.slice!(0..7)
-      opts = {}
-      opts[:is_test] = version[:test]
-      opts[:depth] = hex.slice!(0..1).to_i(16)
-      fingerprint = hex.slice!(0..7)
-      opts[:index] = hex.slice!(0..7).to_i(16)
-      opts[:chain_code] = hex.slice!(0..63).to_i(16)
+      self.new({
+        is_test: version[:test],
+        depth: hex.slice!(0..1).to_i(16),
+        fingerprint: hex.slice!(0..7),
+        index: hex.slice!(0..7).to_i(16),
+        chain_code: hex.slice!(0..63).to_i(16)
+      }.merge(key_options(hex, version)))
+    end
+    
+    def self.key_options(hex, version)
       if version[:private_key] && hex.slice(0..1) == '00'
-        opts[:private_key] = MoneyTree::PrivateKey.new key: hex.slice(2..-1)
-        opts[:public_key] = MoneyTree::PublicKey.new opts[:private_key]
+        private_key = MoneyTree::PrivateKey.new key: hex.slice(2..-1)
+        { private_key: private_key, public_key: MoneyTree::PublicKey.new(private_key) }
       elsif %w(02 03).include? hex.slice(0..1)
-        opts[:public_key] = MoneyTree::PublicKey.new hex
+        { public_key: MoneyTree::PublicKey.new(hex) }
       else
         raise ImportError, 'Public or private key data does not match version type'
       end
-      new opts
     end
     
     def self.from_version_hex(hex)
