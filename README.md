@@ -194,19 +194,28 @@ You can also import a node using only a public key. Keep in mind that this node 
 ```
 
 #### Values of i and i-prime
-Earlier we discussed the use of an index value (i) to represent the sequential ordinal index of a child in relation to its parent. That is, i=0 would be the first child, i=1 would be the second child, and so forth up to (i-1) as the i'th child. This index value is very important in the child key derivation process because it allows us to create a whole bunch of subnodes (child keys) for a given node, just by incrementing the i value. In fact, i is a 32-bit unsigned integer which gives us the ability to create up to 4,294,967,296 addresses for one node.
+Earlier we discussed the use of an index value `i` to represent the sequential ordinal index of a child in relation to its parent. That is, `i=0` would be the first child, `i=1` would be the second child, and so forth up to `(i-1)` as the i'th child. This index value is very important in the child key derivation process because it allows us to create a whole bunch of subnodes (child keys) for a given node, just by incrementing the i value. In fact, i is a 32-bit unsigned integer which gives us the ability to create up to 4,294,967,296 addresses for one node.
 
-When choosing i values, the BIP0032 spec calls for using a reserved set of i values to denote a node that should use private derivation and another reserved set of i values to denote public derivation.
+When choosing `i` values, the BIP0032 spec calls for using a reserved set of `i` values to denote a node that should use private derivation and another reserved set of `i` values to denote public derivation.
 
-The way this breaks down is
+The way this breaks down is:
+
 0 through 2,147,483,647 (i < 0x80000000) should use public derivation
+
 2,147,483,648 through 4,294,967,295 (i >= 0x80000000) should use private derivation
 
 Yikes, that's a lot of detail to remember. Luckily, there is a simple notation in the path strings that allow us to easily tell the difference between a node that uses public derivation and a node that uses private derivation. We use either " ' " (prime symbol) or "p" at the end of a node path part to denote private derivation.
 
 For instance:
-`"m/0'/1"` and `"m/0p/1"` are equivalent and they translate to the "the second publicly derived  child (`1`) of the first privately derived child (`0 prime`) of the master key `m`". But since we know that the "first privately derived child" is in the `i` value range above `0x80000000`, the very first possible `i` value in this range is actually `0x80000000`, or 2,147,483,648. Therefore when we say `"m/0p/1"`, what we really mean is `"m/2147483648/1"`. Thus
-`"m/0'/1" == "m/0p/1" == "m/2147483648/1"`. They are all equivalent ways of saying the same thing, but the first two are just a more human readable shorthand notation. You are free to use whichever notation you prefer. This gem will parse it.
+`"m/0'/1"` and `"m/0p/1"` are equivalent and they translate to the "the second publicly derived  child `1` of the first privately derived child `0 prime` of the master key `m`". But since we know that the "first privately derived child" is in the `i` value range above `0x80000000`, the very first possible `i` value in this range is actually `0x80000000`, or 2,147,483,648. Therefore when we say `"m/0p/1"`, what we really mean is `"m/2147483648/1"`. Thus:
+
+```ruby
+"m/0'/1" == "m/0p/1" == "m/2147483648/1"
+```
+
+They are all equivalent ways of saying the same thing, but the first two are just a more human readable shorthand notation. You are free to use whichever notation you prefer. This gem will parse it.
+
+To add just a little more confusion to the mix, some wallets will use negative `i` values to also denote private derivation. Any `i` value that is negative will be processed using private derivation by this library. 
 
 
 ## Contributing
