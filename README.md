@@ -114,6 +114,21 @@ DO NOT use a user generated password. Keep in mind that whoever controls the see
 ### Generate a child Node
 In HD Wallets, we refer to children nodes by their path in relation to the master node. This is determined using a slash-delimited string where each part of the delimited string represents a node in increasing depth. For instance, the path "m/0/3" walks down the tree starting with "m" the master key. The first part "m" represents the master key at depth 0. The next part "0" (i=0) represents the first child (sequentially) of "m" (depth 1). The last part "3" (i=3) represents the fourth child node of the previous node (depth 2), and so on down the line. You can create as many depths of nodes as you like.
 
+To generate a child node from a given path:
+
+```ruby
+@node = @master.node_for_path "m/0/3"
+=> MoneyTree::Node instance
+@node.index
+=> 3
+@node.depth
+=> 2
+@node.to_serialized_address(:private)
+=> "xprv9ww7sMFLzJN15m7zX5JEBXQrQq8h4fU8PVqd929Hjy3xNSMzeBf163idMNBSq47DdCakyZTK7KcC2nbz3jqUkpJj8ZR4FqrijcFcFmcoBAe"
+@node.to_serialized_address
+=> "xpub6AvUGrnEpfvJJFCTd6qEYfMaxryBU8BykimDwQYuJJawFEh9BiyFdr37Cc4wEKCWWv7TsFQRUMdezXVqV9cfBUbeUEgNYCCP4omxULbNaRr"
+```
+
 #### Chain codes
 In HD wallets, chain codes are the mathematical glue that binds a parent node to its child node. We use chain codes in order to create a mathematical relationship between a parent and its child. You don't necessarily need to understand how chain codes work because this library abstracts it for you, but you do at least need to know that for any given node, if you'd like to calculate its child node, you'll need three pieces of information. The parent node's key (either private or public), the sequential index value of i for the child and the parent node's chain code.
 
@@ -151,8 +166,47 @@ You'll recall that HD Wallets allow us to generate an entire tree of private/pub
 
 However, an added benefit of HD Wallets is that with JUST a public key, we can generate ALL public keys below that key. But how do we do this, since we don't have any private keys? We usually just put our private key in the Cryptomatic 2000 and out comes a public key. We accomplish this by using a second type of derivation called "public derivation". Using the power of a lot of math and elliptic curve formulae that look like it's straight out of _Good Will Hunting_, we can calculate the child public key directly from a parent public key. However, we cannot calculate the child private key. Therefore, if you only have a public key, you will only be able to derive other public keys. (That's a feature, not a bug.)
 
-<!-- #### Values of i and what they mean
-When we want to derive a key -->
+#### Export a public-key only node
+Sometimes you don't want a node to contain any private key information. You can request that MoneyTree return you a node that is stripped of its private information by using a special notation in the path.
+
+Either using a capital "M" instead of a lowercase "m", or by appending ".pub" to the end of the path, you will receive a node that is stripped of its private key.
+
+For example:
+
+```ruby
+@node = @master.node_for_path("M/0/3") # or "m/0/3.pub" or "M/0/3.pub"...these are equivalent
+@node.to_serialized_address
+=> "xpub6AvUGrnEpfvJJFCTd6qEYfMaxryBU8BykimDwQYuJJawFEh9BiyFdr37Cc4wEKCWWv7TsFQRUMdezXVqV9cfBUbeUEgNYCCP4omxULbNaRr"
+@node.to_serialized_address(:private)
+-> raises MoneyTree::Node::PrivatePublicMismatch error
+```
+
+#### Import a public-key only node
+You can also import a node using only a public key. Keep in mind that this node will only be able to generate other public-key only nodes. You will not be able to derive child private keys using this node.
+
+```ruby
+@node = MoneyTree::Node.from_serialized_address("xpub6AvUGrnEpfvJJFCTd6qEYfMaxryBU8BykimDwQYuJJawFEh9BiyFdr37Cc4wEKCWWv7TsFQRUMdezXVqV9cfBUbeUEgNYCCP4omxULbNaRr")
+=> MoneyTree::Node instance
+@node.to_serialized_address
+=> "xpub6AvUGrnEpfvJJFCTd6qEYfMaxryBU8BykimDwQYuJJawFEh9BiyFdr37Cc4wEKCWWv7TsFQRUMdezXVqV9cfBUbeUEgNYCCP4omxULbNaRr"
+@node.to_serialized_address(:private)
+-> raises MoneyTree::Node::PrivatePublicMismatch error
+```
+
+#### Values of i and i-prime
+Earlier we discussed the use of an index value (i) to represent the sequential ordinal index of a child in relation to its parent. That is, i=0 would be the first child, i=1 would be the second child, and so forth up to (i-1) as the i'th child. This index value is very important in the child key derivation process because it allows us to create a whole bunch of subnodes (child keys) for a given node, just by incrementing the i value. In fact, i is a 32-bit unsigned integer which gives us the ability to create up to 4,294,967,296 addresses for one node.
+
+When choosing i values, the BIP0032 spec calls for using a reserved set of i values to denote a node that should use private derivation and another reserved set of i values to denote public derivation.
+
+The way this breaks down is
+0 through 2,147,483,647 (i < 0x80000000) should use public derivation
+2,147,483,648 through 4,294,967,295 (i >= 0x80000000) should use private derivation
+
+Yikes, that's a lot of detail to remember. Luckily, there is a simple notation in the path strings that allow us to easily tell the difference between a node that uses public derivation and a node that uses private derivation. We use either " ' " (prime symbol) or "p" at the end of a node path part to denote private derivation.
+
+For instance:
+`"m/0'/1"` and `"m/0p/1"` are equivalent and they translate to the "the second publicly derived  child (`1`) of the first privately derived child (`0 prime`) of the master key `m`". But since we know that the "first privately derived child" is in the `i` value range above `0x80000000`, the very first possible `i` value in this range is actually `0x80000000`, or 2,147,483,648. Therefore when we say `"m/0p/1"`, what we really mean is `"m/2147483648/1"`. Thus
+`"m/0'/1" == "m/0p/1" == "m/2147483648/1"`. They are all equivalent ways of saying the same thing, but the first two are just a more human readable shorthand notation. You are free to use whichever notation you prefer. This gem will parse it.
 
 
 ## Contributing
