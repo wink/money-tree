@@ -215,7 +215,7 @@ For instance:
 
 They are all equivalent ways of saying the same thing, but the first two are just a more human readable shorthand notation. You are free to use whichever notation you prefer. This gem will parse it.
 
-To add just a little more confusion to the mix, some wallets will use negative `i` values to also denote private derivation. Any `i` value that is negative will be processed using private derivation by this library. 
+To add just a little more confusion to the mix, some wallets will use negative `i` values to also denote private derivation. Any `i` value that is negative will be processed using private derivation by this library. e.g. `"m/-1/1"`.
 
 
 ## Contributing
