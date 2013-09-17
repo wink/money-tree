@@ -68,12 +68,14 @@ DO NOT use a user generated password. Keep in mind that whoever controls the see
 # Create a new master node (with automatic seed generation)
 @master = MoneyTree::Master.new
 => MoneyTree::Master instance
+
 @master.seed
 => "N\xC5\x9DD\xAA\xCC\x80a\a\x96%8\xC8\x86\x81\x90\t\x82&\xE4\x97Ay\xECs\xD8\xB1M\xEA\xE6|\xEF"
 
 # Or import an existing seed
 @master = MoneyTree::Master.new seed_hex: "000102030405060708090a0b0c0d0e0f"
 => MoneyTree::Master instance
+
 @master.seed
 => "\x00\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F"
 ```
@@ -85,28 +87,40 @@ DO NOT use a user generated password. Keep in mind that whoever controls the see
 # Here are some things you can do with a node.
 @master.index # The index is a sequential identifier in relation to its parent node. (i.e. the nth child of its parent)
 => 0
+
 @master.depth # How many steps down the tree this node is. (The master node is at depth 0, its direct child is at depth 1, and so on...)
 => 0
+
 @master.to_identifier
 => "3442193e1bb70916e914552172cd4e2dbc9df811"
+
 @master.to_fingerprint
 => "3442193e"
+
 @master.to_address
 => "15mKKb2eos1hWa6tisdPwwDC1a5J1y9nma"
+
 @master.private_key.to_hex
 => "e8f32e723decf4051aefac8e2c93c9c5b214313817cdb01a1494b917c8436b35"
+
 @master.private_key.to_wif
 => "L52XzL2cMkHxqxBXRyEpnPQZGUs3uKiL3R11XbAdHigRzDozKZeW"
+
 @master.public_key.to_hex
 => "0339a36013301597daef41fbe593a02cc513d0b55527ec2df1050e2e8ff49c85c2"
+
 @master.chain_code_hex 
 => "873dff81c02f525623fd1fe5167eac3a55a049de3d314bb42ee227ffed37d508" # Look up chain codes in the BIP0032 spec
+
 @master.to_serialized_hex(:private)
 => "0488ade4000000000000000000873dff81c02f525623fd1fe5167eac3a55a049de3d314bb42ee227ffed37d50800e8f32e723decf4051aefac8e2c93c9c5b214313817cdb01a1494b917c8436b35"
+
 @master.to_serialized_address(:private)
 => "xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi"
+
 @master.to_serialized_hex
 => "0488b21e000000000000000000873dff81c02f525623fd1fe5167eac3a55a049de3d314bb42ee227ffed37d5080339a36013301597daef41fbe593a02cc513d0b55527ec2df1050e2e8ff49c85c2"
+
 @master.to_serialized_address
 => "xpub661MyMwAqRbcFtXgS5sYJABqqG9YLmC4Q1Rdap9gSE8NqtwybGhePY2gZ29ESFjqJoCu1Rupje8YtGqsefD265TMg7usUDFdp6W1EGMcet8"
 ```
@@ -119,12 +133,16 @@ To generate a child node from a given path:
 ```ruby
 @node = @master.node_for_path "m/0/3"
 => MoneyTree::Node instance
+
 @node.index
 => 3
+
 @node.depth
 => 2
+
 @node.to_serialized_address(:private)
 => "xprv9ww7sMFLzJN15m7zX5JEBXQrQq8h4fU8PVqd929Hjy3xNSMzeBf163idMNBSq47DdCakyZTK7KcC2nbz3jqUkpJj8ZR4FqrijcFcFmcoBAe"
+
 @node.to_serialized_address
 => "xpub6AvUGrnEpfvJJFCTd6qEYfMaxryBU8BykimDwQYuJJawFEh9BiyFdr37Cc4wEKCWWv7TsFQRUMdezXVqV9cfBUbeUEgNYCCP4omxULbNaRr"
 ```
@@ -138,8 +156,11 @@ You don't need to worry about chain codes if you are creating or importing from 
 Beacause we need multiple pieces of info to reconstruct nodes in a tree, when we're dealing with HD wallets, we pass around a serialized address format that encodes both the key and the chain code. It looks like this:
 
 ```ruby
-"xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi" # private key
-"xpub661MyMwAqRbcFtXgS5sYJABqqG9YLmC4Q1Rdap9gSE8NqtwybGhePY2gZ29ESFjqJoCu1Rupje8YtGqsefD265TMg7usUDFdp6W1EGMcet8" # public key
+# private key
+"xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi"
+
+# public key
+"xpub661MyMwAqRbcFtXgS5sYJABqqG9YLmC4Q1Rdap9gSE8NqtwybGhePY2gZ29ESFjqJoCu1Rupje8YtGqsefD265TMg7usUDFdp6W1EGMcet8"
 ```
 
 In addition to the key and the chain code, this encoding also includes info about the depth and index of the key, along with a fingerprint of its parent key (which I presume is for quickly sorting a big pile of keys into a tree).   
@@ -151,6 +172,7 @@ To export a node to a serialized address, you can do:
 ```ruby
 @node.to_serialized_address(:private) # for private keys
 => "xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi"
+
 @node.to_serialized_address
 => "xpub661MyMwAqRbcFtXgS5sYJABqqG9YLmC4Q1Rdap9gSE8NqtwybGhePY2gZ29ESFjqJoCu1Rupje8YtGqsefD265TMg7usUDFdp6W1EGMcet8"
 ```
@@ -175,8 +197,10 @@ For example:
 
 ```ruby
 @node = @master.node_for_path("M/0/3") # or "m/0/3.pub" or "M/0/3.pub"...these are equivalent
+
 @node.to_serialized_address
 => "xpub6AvUGrnEpfvJJFCTd6qEYfMaxryBU8BykimDwQYuJJawFEh9BiyFdr37Cc4wEKCWWv7TsFQRUMdezXVqV9cfBUbeUEgNYCCP4omxULbNaRr"
+
 @node.to_serialized_address(:private)
 -> raises MoneyTree::Node::PrivatePublicMismatch error
 ```
@@ -187,8 +211,10 @@ You can also import a node using only a public key. Keep in mind that this node 
 ```ruby
 @node = MoneyTree::Node.from_serialized_address("xpub6AvUGrnEpfvJJFCTd6qEYfMaxryBU8BykimDwQYuJJawFEh9BiyFdr37Cc4wEKCWWv7TsFQRUMdezXVqV9cfBUbeUEgNYCCP4omxULbNaRr")
 => MoneyTree::Node instance
+
 @node.to_serialized_address
 => "xpub6AvUGrnEpfvJJFCTd6qEYfMaxryBU8BykimDwQYuJJawFEh9BiyFdr37Cc4wEKCWWv7TsFQRUMdezXVqV9cfBUbeUEgNYCCP4omxULbNaRr"
+
 @node.to_serialized_address(:private)
 -> raises MoneyTree::Node::PrivatePublicMismatch error
 ```
