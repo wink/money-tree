@@ -135,7 +135,7 @@ In HD wallets, chain codes are the mathematical glue that binds a parent node to
 You don't need to worry about chain codes if you are creating or importing from a Master key (it's always the same for all HD wallet master keys), however if you are trying to import a derived child key at some lower depth in the tree, you'll need the chain code. Luckily, whenever we export a node to a wallet file, we encode it in a special format that includes all of the relevant info (including chain code) that we need to reconstruct the node in a single convenient serialized address.
 
 #### Serialized Addresses
-Beacause we need multiple pieces of info to reconstruct nodes in a tree, when we're dealing with HD wallets, we pass around a serialized address format that encodes both the key and the chain code. It lookes like this:
+Beacause we need multiple pieces of info to reconstruct nodes in a tree, when we're dealing with HD wallets, we pass around a serialized address format that encodes both the key and the chain code. It looks like this:
 
 ```ruby
 "xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi" # private key
