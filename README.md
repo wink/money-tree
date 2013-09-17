@@ -28,7 +28,9 @@ Want to give your accountant access to view all transactions, but you don't want
 
 ## Where can I learn more?
 [A quick primer on deterministic wallets](https://en.bitcoin.it/wiki/Deterministic_wallet)
+
 [The official HD Wallet spec on the Bitcoin wiki](https://en.bitcoin.it/wiki/BIP_0032)
+
 [An awesome talk by Pieter Wuille at Bitcoin 2013 Conference](http://youtu.be/cfkCs4NdNss)
 
 ## Installation
@@ -108,18 +110,20 @@ DO NOT use a user generated password. Keep in mind that whoever controls the see
 ```
 
 ### Generate a child Node
-In HD Wallets, we refer to children nodes by their path in relation to the master node. This is determined using a slash-delimited string where each part of the delimited string represents a node in increasing depth. For instance, the path "m/0/3" walks down the tree starting with "m" the master key. The first part "m" represents the master key at depth 0. The next part "0" represents the first child (sequentially) of "m" (depth 1). The last part "3" represents the fourth child node of the previous node (depth 2), and so on down the line. You can create as many depths of nodes as you like.
+In HD Wallets, we refer to children nodes by their path in relation to the master node. This is determined using a slash-delimited string where each part of the delimited string represents a node in increasing depth. For instance, the path "m/0/3" walks down the tree starting with "m" the master key. The first part "m" represents the master key at depth 0. The next part "0" (i=0) represents the first child (sequentially) of "m" (depth 1). The last part "3" (i=3) represents the fourth child node of the previous node (depth 2), and so on down the line. You can create as many depths of nodes as you like.
 
 #### Chain codes
-In HD wallets, chain codes are the mathematical glue that binds a parent node to its child node. We use chain codes in order to create a mathematical relationship between a parent and its child. You don't necessarily need to understand how chain codes work because this library abstracts it for you, but you do at least need to know that for any given node, if you'd like to calculate its child node, you'll need two pieces of information. The parent node's key (either private or public) and the parent node's chain code.
+In HD wallets, chain codes are the mathematical glue that binds a parent node to its child node. We use chain codes in order to create a mathematical relationship between a parent and its child. You don't necessarily need to understand how chain codes work because this library abstracts it for you, but you do at least need to know that for any given node, if you'd like to calculate its child node, you'll need three pieces of information. The parent node's key (either private or public), the sequential index value of i for the child and the parent node's chain code.
 
-You don't need to worry about chain codes if you are creating or importing from a Master key, however if you are trying to import a derived child key at some lower depth in the tree, you'll need the chain code. Luckily, whenever we export a node to a wallet file, we encode it in a special format that includes all of the relevant info (including chain code) that we need to reconstruct the node in a single convenient serialized address.
+You don't need to worry about chain codes if you are creating or importing from a Master key (it's always the same for all HD wallet master keys), however if you are trying to import a derived child key at some lower depth in the tree, you'll need the chain code. Luckily, whenever we export a node to a wallet file, we encode it in a special format that includes all of the relevant info (including chain code) that we need to reconstruct the node in a single convenient serialized address.
 
 #### Serialized Addresses
 Beacause we need multiple pieces of info to reconstruct nodes in a tree, when we're dealing with HD wallets, we pass around a serialized address format that encodes both the key and the chain code. It lookes like this:
 
-     xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi # private key
-     xpub661MyMwAqRbcFtXgS5sYJABqqG9YLmC4Q1Rdap9gSE8NqtwybGhePY2gZ29ESFjqJoCu1Rupje8YtGqsefD265TMg7usUDFdp6W1EGMcet8 # public key
+```ruby
+"xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi" # private key
+"xpub661MyMwAqRbcFtXgS5sYJABqqG9YLmC4Q1Rdap9gSE8NqtwybGhePY2gZ29ESFjqJoCu1Rupje8YtGqsefD265TMg7usUDFdp6W1EGMcet8" # public key
+```
 
 In addition to the key and the chain code, this encoding also includes info about the depth and index of the key, along with a fingerprint of its parent key (which I presume is for quickly sorting a big pile of keys into a tree).   
   
