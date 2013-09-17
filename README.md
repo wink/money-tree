@@ -27,11 +27,9 @@ One bonus feature of HD Wallets is that they give you a lot of control over who 
 Want to give your accountant access to view all transactions, but you don't want to give her access to spend any of your coins? No problem. You can simply give her the public key at any level in the tree that you desire, and she will be able to view transactions below that key in the tree, but won't be able to spend any of the coins.
 
 ## Where can I learn more?
-[A quick primer on deterministic wallets](https://en.bitcoin.it/wiki/Deterministic_wallet)
-
-[The official HD Wallet spec on the Bitcoin wiki](https://en.bitcoin.it/wiki/BIP_0032)
-
-[An awesome talk by Pieter Wuille at Bitcoin 2013 Conference](http://youtu.be/cfkCs4NdNss)
+- [A quick primer on deterministic wallets](https://en.bitcoin.it/wiki/Deterministic_wallet)
+- [The official HD Wallet spec on the Bitcoin wiki](https://en.bitcoin.it/wiki/BIP_0032)
+- [An awesome talk by Pieter Wuille at Bitcoin 2013 Conference](http://youtu.be/cfkCs4NdNss)
 
 ## Installation
 
@@ -145,9 +143,9 @@ To import from a serialized address: (either public or private)
 ```
 
 #### Private derivation vs public derivation
-You'll recall that HD Wallets allow us to generate an entire tree of private/public keypairs with a single parent private key. When we wish to generate child keypairs (that is, we want both the child private key and the child public key), we MUST have access to the parent private key. Using what's called "private derivation", we take the parent private key and its associated chain code along with a given index value (i.e. 0 = 1st child, 1 = 2nd child, (i-1) = ith child...), and we cryptomash&trade; them together to form a child private key. This key can then be used to generate its associated public key (in the same way we normally create Elliptic curve public keys from private keys).
+You'll recall that HD Wallets allow us to generate an entire tree of private/public keypairs with a single parent private key. When we wish to generate child keypairs (that is, we want both the child private key and the child public key), we MUST have access to the parent private key. Using what's called "private derivation", we take the parent private key and its associated chain code along with a given index value (i.e. 0 = 1st child, 1 = 2nd child, (i-1) = ith child...), and we cryptomash&trade; them together to form a child private key and a new child chain code. This child key can then be used to generate its associated public key (in the same way we normally create Bitcoin public keys from private keys). The new chain code can be used to derive children of this child key and this process can keep repeating itself down the tree.
 
-However, an added benefit of HD Wallets is that with JUST a public key, we can generate ALL public keys below that key. But how do we do this, since we don't have any private keys? We usually just put our private key in the Cryptomatic 2000 and out comes a public key. We accomplish this by using a second type of derivation called "public derivation". Using the power of a lot of math and elliptic curve formulae that look like it's straight out of _Good Will Hunting_, we can calculate the child public key directly from a parent public key. However, we cannot calculate the child private key. Therefore, if you only have a public key, you will only be able to derive other public keys.
+However, an added benefit of HD Wallets is that with JUST a public key, we can generate ALL public keys below that key. But how do we do this, since we don't have any private keys? We usually just put our private key in the Cryptomatic 2000 and out comes a public key. We accomplish this by using a second type of derivation called "public derivation". Using the power of a lot of math and elliptic curve formulae that look like it's straight out of _Good Will Hunting_, we can calculate the child public key directly from a parent public key. However, we cannot calculate the child private key. Therefore, if you only have a public key, you will only be able to derive other public keys. (That's a feature, not a bug.)
 
 <!-- #### Values of i and what they mean
 When we want to derive a key -->
