@@ -4,7 +4,7 @@
 
 MoneyTree is a Ruby implementation of Bitcoin Wallets. Specifically, it supports [Hierachical Deterministic wallets](https://en.bitcoin.it/wiki/Deterministic_Wallet) according to the protocol specified in [BIP0032](https://en.bitcoin.it/wiki/BIP_0032).
 
-> If you find this helpful, please consider a small Bitcoin donation to 1nj2kie1hATcFbAaD7dEY53QaxNgt4KBp
+    If you find this helpful, please consider a small Bitcoin donation to 1nj2kie1hATcFbAaD7dEY53QaxNgt4KBp
 
 ## Why would I want an HD Wallet?
 Hierarchical Deterministic (HD) Bitcoin Wallets offer several advantages over traditional Bitcoin wallets.
