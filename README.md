@@ -62,7 +62,7 @@ These instructions assume you have a decent understanding of how Bitcoin wallets
 
 To create a new HD Wallet, we're going to create a tree structure of private/public keypairs (nodes).  You'll first want to start with a master node. This master node should be seeded with at least 16 random bytes but preferably 32 random bytes from a cryptographically secure PRNG (pseudo-random number generator). 
 
-DO NOT use a user generated password. Keep in mind that whoever controls the seed controls ALL coins in the entire tree, so it should not be left up to a human brain, because humans tend to follow patterns and patterns are subject to brute force attacks. Luckily, I've already included the seed generation by default so you don't need to create this on your own.
+DO NOT use a user generated password. Keep in mind that whoever controls the seed controls ALL coins in the entire tree, so it should not be left up to a human brain, because humans tend to follow patterns and patterns are subject to brute force attacks. Luckily, MoneyTree includes the seed generation by default so you don't need to create this on your own.
 
 ```ruby
 # Create a new master node (with automatic seed generation)

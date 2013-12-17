@@ -1,6 +1,7 @@
 module MoneyTree
   class Node
     include Support
+    extend Support
     attr_reader :private_key, :public_key, :chain_code, :is_private, :depth, :index, :parent, :is_test
     
     class PublicDerivationFailure < Exception; end

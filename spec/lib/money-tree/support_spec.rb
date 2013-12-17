@@ -1,8 +1,8 @@
 require 'spec_helper'
 require 'money-tree'
-include MoneyTree::Support
 
-describe MoneyTree::Support do  
+describe MoneyTree::Support do
+  include MoneyTree::Support
 
   describe "sha256(str)" do
     it "properly calculates sha256 hash" do
