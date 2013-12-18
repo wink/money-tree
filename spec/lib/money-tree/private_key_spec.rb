@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'money-tree'
 
 describe MoneyTree::PrivateKey do
   before do

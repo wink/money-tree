@@ -7,6 +7,7 @@ module MoneyTree
   class Key
     include OpenSSL
     include Support
+    extend Support
     class KeyInvalid < Exception; end
     class KeyGenerationFailure < Exception; end
     class KeyImportFailure < Exception; end
