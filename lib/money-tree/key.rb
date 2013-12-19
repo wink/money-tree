@@ -180,13 +180,13 @@ module MoneyTree
     end
     
     def compressed
-      compressed_key = self.dup
+      compressed_key = self.class.new raw_key # deep clone
       compressed_key.set_point to_i, compressed: true
       compressed_key
     end
     
     def uncompressed
-      uncompressed_key = self.dup
+      uncompressed_key = self.class.new raw_key # deep clone
       uncompressed_key.set_point to_i, compressed: false
       uncompressed_key
     end

@@ -179,7 +179,8 @@ module MoneyTree
           nodes << self
         else
           i = parse_index(part)
-          nodes << nodes.last.subnode(i)
+          node = nodes.last || self
+          nodes << node.subnode(i)
         end
       end
       if force_public or parts.first == 'M'

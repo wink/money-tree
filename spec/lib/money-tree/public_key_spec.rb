@@ -121,4 +121,40 @@ describe MoneyTree::PublicKey do
       lambda { @key = MoneyTree::PublicKey.new 'THISISNOTAVALIDKEY' }.should raise_error(MoneyTree::Key::KeyFormatNotFound)
     end
   end
+
+  describe "recalcuating public key" do
+    it "produces same results" do
+      results = []
+      100.times do 
+        results << MoneyTree::PublicKey.new('042dfc2557a007c93092c2915f11e8aa70c4f399a6753e2e908330014091580e4b11203096f1a1c5276a73f91b9465357004c2103cc42c63d6d330df589080d2e4').to_s
+      end
+      results.uniq.length.should == 1
+    end
+  end
+
+  describe "#uncompressed" do
+    before do
+      @key = MoneyTree::PublicKey.new('022dfc2557a007c93092c2915f11e8aa70c4f399a6753e2e908330014091580e4b')
+    end
+
+    it "does not mutate key" do
+      before_str = @key.to_s
+      @key.uncompressed
+      after_str = @key.to_s
+      before_str.should == after_str
+    end
+  end
+
+  describe "#compressed" do
+    before do
+      @key = MoneyTree::PublicKey.new('042dfc2557a007c93092c2915f11e8aa70c4f399a6753e2e908330014091580e4b11203096f1a1c5276a73f91b9465357004c2103cc42c63d6d330df589080d2e4')
+    end
+
+    it "does not mutate key" do
+      before_str = @key.to_s
+      @key.compressed
+      after_str = @key.to_s
+      before_str.should == after_str
+    end
+  end
 end
