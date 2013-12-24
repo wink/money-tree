@@ -91,4 +91,16 @@ describe MoneyTree::PrivateKey do
       
     end
   end
+
+  context "testnet" do
+    before do
+      @key = MoneyTree::PrivateKey.new key: 'cRhes8SBnsF6WizphaRKQKZZfDniDa9Bxcw31yKeEC1KDExhxFgD'
+    end
+
+    describe "to_wif" do
+      it "returns same wif" do
+        @key.to_wif.should == 'cRhes8SBnsF6WizphaRKQKZZfDniDa9Bxcw31yKeEC1KDExhxFgD'
+      end
+    end
+  end
 end

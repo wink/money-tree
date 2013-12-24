@@ -157,4 +157,27 @@ describe MoneyTree::PublicKey do
       before_str.should == after_str
     end
   end
+
+  context "testnet" do
+    context 'with private key' do
+      before do
+        @private_key = MoneyTree::PrivateKey.new network: :bitcoin_testnet
+        @key = MoneyTree::PublicKey.new(@private_key)
+      end
+
+      it "should have an address starting with m or n" do
+        %w(m n).should include(@key.to_s[0])
+      end
+    end
+
+    context 'without private key' do
+      before do
+        @key = MoneyTree::PublicKey.new('0297b033ba894611345a0e777861237ef1632370fbd58ebe644eb9f3714e8fe2bc', network: :bitcoin_testnet)
+      end
+
+      it "should have an address starting with m or n" do
+        %w(m n).should include(@key.to_s[0])
+      end
+    end
+  end
 end

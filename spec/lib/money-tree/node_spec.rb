@@ -12,7 +12,59 @@ describe MoneyTree::Master do
         @master.seed.bytesize.should == 32
       end
     end
-    
+
+    context "testnet" do
+      before do
+        @master = MoneyTree::Master.new network: :bitcoin_testnet
+      end
+
+      it "generates testnet address" do
+        %w(m n).should include(@master.to_address[0])
+      end
+
+      it "generates testnet compressed wif" do
+        @master.private_key.to_wif[0].should == 'c'
+      end
+
+      it "generates testnet uncompressed wif" do
+        @master.private_key.to_wif(compressed: false)[0].should == '9'
+      end
+
+      it "generates testnet serialized private address" do
+        @master.to_serialized_address(:private).slice(0, 4).should == "tprv"
+      end
+
+      it "generates testnet serialized public address" do
+        @master.to_serialized_address.slice(0, 4).should == "tpub"
+      end
+
+      it "imports from testnet serialized private address" do
+        node = MoneyTree::Node.from_serialized_address 'tprv8ZgxMBicQKsPcuN7bfUZqq78UEYapr3Tzmc9NcDXw8BnBJ47dZYr6SusnfYj7vbAYP9CP8ZiD5aVBTUo1yU5QP56mepKVvuEbu8KZQXMKNE'
+        node.to_serialized_address(:private).should == 'tprv8ZgxMBicQKsPcuN7bfUZqq78UEYapr3Tzmc9NcDXw8BnBJ47dZYr6SusnfYj7vbAYP9CP8ZiD5aVBTUo1yU5QP56mepKVvuEbu8KZQXMKNE'
+      end
+
+      it "imports from testnet serialized public address" do
+        node = MoneyTree::Node.from_serialized_address 'tpubD6NzVbkrYhZ4YA8aUE9bBZTSyHJibBqwDny5urfwDdJc4W8od3y3Ebzy6CqsYn9CCC5P5VQ7CeZYpnT1kX3RPVPysU2rFRvYSj8BCoYYNqT'
+        %w(m n).should include(node.public_key.to_s[0])
+        node.to_serialized_address.should == 'tpubD6NzVbkrYhZ4YA8aUE9bBZTSyHJibBqwDny5urfwDdJc4W8od3y3Ebzy6CqsYn9CCC5P5VQ7CeZYpnT1kX3RPVPysU2rFRvYSj8BCoYYNqT'
+      end
+
+      it "generates testnet subnodes from serialized private address" do
+        node = MoneyTree::Node.from_serialized_address 'tprv8ZgxMBicQKsPcuN7bfUZqq78UEYapr3Tzmc9NcDXw8BnBJ47dZYr6SusnfYj7vbAYP9CP8ZiD5aVBTUo1yU5QP56mepKVvuEbu8KZQXMKNE'
+        subnode = node.node_for_path('1/1/1')
+        %w(m n).should include(subnode.public_key.to_s[0])
+        subnode.to_serialized_address(:private).slice(0,4).should == 'tprv'
+        subnode.to_serialized_address.slice(0,4).should == 'tpub'
+      end
+
+      it "generates testnet subnodes from serialized public address" do
+        node = MoneyTree::Node.from_serialized_address 'tpubD6NzVbkrYhZ4YA8aUE9bBZTSyHJibBqwDny5urfwDdJc4W8od3y3Ebzy6CqsYn9CCC5P5VQ7CeZYpnT1kX3RPVPysU2rFRvYSj8BCoYYNqT'
+        subnode = node.node_for_path('1/1/1')
+        %w(m n).should include(subnode.public_key.to_s[0])
+        subnode.to_serialized_address.slice(0,4).should == 'tpub'
+      end
+    end
+
     describe "Test vector 1" do
       describe "from a seed" do
         before do

@@ -49,4 +49,14 @@ describe MoneyTree::Address do
       @address.private_key.to_s.should == "KzPkwAXJ4wtXHnbamTaJqoMrzwCUUJaqhUxnqYhnZvZH6KhgmDPK"
     end
   end
+
+  context "testnet3" do
+    before do
+      @address = MoneyTree::Address.new network: :bitcoin_testnet
+    end
+
+    it "returns a testnet address" do
+      %w(m n).should include(@address.to_s[0])
+    end
+  end
 end

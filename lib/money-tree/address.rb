@@ -1,10 +1,11 @@
 module MoneyTree
   class Address
-    attr_accessor :private_key, :public_key
+    attr_reader :private_key, :public_key
     
     def initialize(opts = {})
-      @private_key = MoneyTree::PrivateKey.new key: opts[:private_key]
-      @public_key = MoneyTree::PublicKey.new(@private_key)
+      private_key = opts.delete(:private_key)
+      @private_key = MoneyTree::PrivateKey.new({ key: private_key }.merge(opts))
+      @public_key = MoneyTree::PublicKey.new(@private_key, opts)
     end
     
     def to_s
