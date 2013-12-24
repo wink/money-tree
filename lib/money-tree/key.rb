@@ -116,13 +116,17 @@ module MoneyTree
     end
 
     def compressed_wif_format?
-      compressed_wif_chars = MoneyTree::NETWORKS.map {|k, v| v[:compressed_wif_chars]}.flatten
-      raw_key.length == 52 && compressed_wif_chars.include?(raw_key.slice(0))
+      wif_format?(:compressed)
     end
     
     def uncompressed_wif_format?
-      uncompressed_wif_chars = MoneyTree::NETWORKS.map {|k, v| v[:uncompressed_wif_chars]}.flatten
-      raw_key.length == 51 && uncompressed_wif_chars.include?(raw_key.slice(0))
+      wif_format?(:uncompressed)
+    end
+
+    def wif_format?(compression)
+      length = compression == :compressed ? 52 : 51
+      wif_prefixes = MoneyTree::NETWORKS.map {|k, v| v["#{compression}_wif_chars".to_sym]}.flatten
+      raw_key.length == length && wif_prefixes.include?(raw_key.slice(0))
     end
 
     def base64_format?(base64_key = raw_key)
