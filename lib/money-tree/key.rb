@@ -1,7 +1,6 @@
 # encoding ascii-8bit
 
 require 'openssl'
-require 'pry'
 
 module MoneyTree
   class Key
