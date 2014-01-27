@@ -2,7 +2,7 @@
 # MoneyTree
 ### RSpec tested. Big Brother removed.
 
-MoneyTree is a Ruby implementation of Bitcoin Wallets. Specifically, it supports [Hierachical Deterministic wallets](https://en.bitcoin.it/wiki/Deterministic_Wallet) according to the protocol specified in [BIP0032](https://en.bitcoin.it/wiki/BIP_0032).
+MoneyTree is a Ruby implementation of Bitcoin Wallets. Specifically, it supports [Hierachical Deterministic wallets](https://en.bitcoin.it/wiki/Deterministic_Wallet) according to the protocol specified in [BIP0032](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki).
 
 ___
 If you find this helpful, please consider a small Bitcoin donation to 1nj2kie1hATcFbAaD7dEY53QaxNgt4KBp
@@ -32,7 +32,7 @@ Want to give your accountant access to view all transactions, but you don't want
 
 ## Where can I learn more?
 - [A quick primer on deterministic wallets](https://en.bitcoin.it/wiki/Deterministic_wallet)
-- [The official HD Wallet spec on the Bitcoin wiki](https://en.bitcoin.it/wiki/BIP_0032)
+- [The official HD Wallet spec on the Bitcoin wiki](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki)
 - [An awesome talk by Pieter Wuille at Bitcoin 2013 Conference](http://youtu.be/cfkCs4NdNss)
 
 ## Installation
@@ -56,7 +56,7 @@ If you have a serious problem with this and REALLY need it to work on previous v
 
 ## Usage
 
-These instructions assume you have a decent understanding of how Bitcoin wallets operate and a cursory knowledge of how a [Hierarchical Deterministic Bitcoin Wallet (HD Wallet)](https://en.bitcoin.it/wiki/BIP_0032) works.
+These instructions assume you have a decent understanding of how Bitcoin wallets operate and a cursory knowledge of how a [Hierarchical Deterministic Bitcoin Wallet (HD Wallet)](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki) works.
 
 ### Create a Master Node (seed)
 
