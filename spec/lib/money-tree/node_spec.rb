@@ -11,6 +11,11 @@ describe MoneyTree::Master do
       it "generates a random seed 32 bytes long" do
         @master.seed.bytesize.should == 32
       end
+
+      it "exports the seed in hex format" do
+        @master.should respond_to(:seed_hex)
+        @master.seed_hex.size.should == 64
+      end
     end
 
     context "testnet" do
