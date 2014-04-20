@@ -289,5 +289,9 @@ module MoneyTree
       @chain_code = right_from_hash(seed_hash)
       @public_key = MoneyTree::PublicKey.new @private_key
     end
+
+    def seed_hex
+      bytes_to_hex(seed)
+    end
   end
 end
