@@ -98,7 +98,7 @@ module MoneyTree
     def int_to_hex(i)
       hex = i.to_s(16)
       hex = '0' + hex unless (hex.length % 2).zero?
-      hex.downcase
+      hex.downcase.rjust(64, '0')
     end
         
     def int_to_bytes(i)
