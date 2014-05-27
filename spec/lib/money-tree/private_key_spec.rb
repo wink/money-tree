@@ -9,6 +9,9 @@ describe MoneyTree::PrivateKey do
     it "has 64 characters" do
       # must always be 64 characters - leading zeroes need to be preserved!
       @key.to_hex.length.should == 64
+    end
+
+    it "preserves leading zeros" do
       master = MoneyTree::Master.new seed_hex: "9cf6b6e8451c7d551cb402e2997566e5c7c258543eadb184f9f39322b2e6959b"
       master.node_for_path("m/427").private_key.to_hex.length.should == 64
     end
