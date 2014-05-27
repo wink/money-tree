@@ -95,10 +95,17 @@ module MoneyTree
       bytes.unpack("H*")[0].to_i(16)
     end
     
-    def int_to_hex(i)
-      hex = i.to_s(16)
-      hex = '0' + hex unless (hex.length % 2).zero?
-      hex.downcase.rjust(64, '0')
+    def int_to_hex(i, size=nil)
+      hex = i.to_s(16).downcase
+      if (hex.size % 2) != 0
+        hex = "#{0}#{hex}"
+      end
+
+      if size
+        hex.rjust(size, "0")
+      else
+        hex
+      end
     end
         
     def int_to_bytes(i)

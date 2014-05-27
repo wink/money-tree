@@ -213,7 +213,7 @@ module MoneyTree
     end
     
     def chain_code_hex
-      int_to_hex chain_code
+      int_to_hex chain_code, 64
     end
   end
   
