@@ -10,7 +10,7 @@ If you find this helpful, please consider a small Bitcoin donation to 1nj2kie1hA
 ![Donate BTC](https://raw.github.com/wink/money-tree/master/donation_btc_qr_code.gif)
 ___
 
-## Why would I want an HD Wallet? 
+## Why would I want an HD Wallet?
 Hierarchical Deterministic (HD) Bitcoin Wallets offer several advantages over traditional Bitcoin wallets.
 
 One of the problems with traditional Bitcoin wallets is that the wallet may hold a whole bunch of keypairs, each with Bitcoins attached to them. When you want to back up your wallet, you backup all of the current keys that you control in that wallet. However, if you later generate a new key, you need to make a brand new back up of your wallet. In fact, you need to back up your wallet every time you generate a new key.
