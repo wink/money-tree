@@ -86,7 +86,7 @@ describe MoneyTree::PrivateKey do
   
   describe "valid?(eckey)" do
     it "checks for a valid key" do
-      @key.valid?.should be_true
+      @key.valid?.should be_truthy
     end
   end
   
