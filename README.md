@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/GemHQ/money-tree.png)](https://travis-ci.org/GemHQ/money-tree) [![Coverage Status](https://coveralls.io/repos/GemHQ/money-tree/badge.png?branch=master)](https://coveralls.io/r/GemHQ/money-tree?branch=master) [![Code Climate](https://codeclimate.com/github/GemHQ/money-tree.png)](https://codeclimate.com/github/BitVault/money-tree) [![Gem Version](https://badge.fury.io/rb/money-tree.png)](http://badge.fury.io/rb/money-tree)
+[![Build Status](https://travis-ci.org/GemHQ/money-tree.png)](https://travis-ci.org/GemHQ/money-tree) [![Coverage Status](https://img.shields.io/coveralls/GemHQ/money-tree.svg)](https://coveralls.io/r/GemHQ/money-tree?branch=master) [![Code Climate](https://codeclimate.com/github/GemHQ/money-tree.png)](https://codeclimate.com/github/BitVault/money-tree) [![Gem Version](https://badge.fury.io/rb/money-tree.png)](http://badge.fury.io/rb/money-tree)
 # MoneyTree
 ### RSpec tested. Big Brother removed.
 
