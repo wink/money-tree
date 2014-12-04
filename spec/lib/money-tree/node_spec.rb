@@ -771,7 +771,8 @@ describe MoneyTree::Master do
           @node.is_private?.should == true
           @node.depth.should == 1
           @node.public_key.to_hex.should == "035a784662a4a20a65bf6aab9ae98a6c068a81c52e4b032c0fb5400c706cfccc56"
-          @node.chain_code_hex.should == "47fdacbd0f1097043b78c63c20c34ef4ed9a111d980047ad16282c7ae6236141"        
+          @node.chain_code_hex.should == "47fdacbd0f1097043b78c63c20c34ef4ed9a111d980047ad16282c7ae6236141"
+          @node.parent_fingerprint.should == "3442193e"
         end
         
         it "imports a valid public node address" do
@@ -782,6 +783,7 @@ describe MoneyTree::Master do
           @node.depth.should == 1
           @node.public_key.to_hex.should == "035a784662a4a20a65bf6aab9ae98a6c068a81c52e4b032c0fb5400c706cfccc56"
           @node.chain_code_hex.should == "47fdacbd0f1097043b78c63c20c34ef4ed9a111d980047ad16282c7ae6236141"
+          @node.parent_fingerprint.should == "3442193e"
         end
       end
     end
