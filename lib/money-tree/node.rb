@@ -2,7 +2,8 @@ module MoneyTree
   class Node
     include Support
     extend Support
-    attr_reader :private_key, :public_key, :chain_code, :is_private, :depth, :index, :parent, :network, :network_key
+    attr_reader :private_key, :public_key, :chain_code, 
+      :is_private, :depth, :index, :parent, :network, :network_key
     
     class PublicDerivationFailure < Exception; end
     class InvalidKeyForIndex < Exception; end
@@ -20,7 +21,7 @@ module MoneyTree
       version = from_version_hex hex.slice!(0..7)
       self.new({
         depth: hex.slice!(0..1).to_i(16),
-        fingerprint: hex.slice!(0..7),
+        parent_fingerprint: hex.slice!(0..7),
         index: hex.slice!(0..7).to_i(16),
         chain_code: hex.slice!(0..63).to_i(16)
       }.merge(key_options(hex, version)))
@@ -118,7 +119,7 @@ module MoneyTree
       version_key = type.to_sym == :private ? :extended_privkey_version : :extended_pubkey_version
       hex = network[version_key] # version (4 bytes)
       hex += depth_hex(depth) # depth (1 byte)
-      hex += depth.zero? ? '00000000' : parent.to_fingerprint# fingerprint of key (4 bytes)
+      hex += parent_fingerprint # fingerprint of key (4 bytes)
       hex += index_hex(index) # child number i (4 bytes)
       hex += chain_code_hex
       hex += type.to_sym == :private ? "00#{private_key.to_hex}" : public_key.compressed.to_hex
@@ -137,6 +138,14 @@ module MoneyTree
       public_key.compressed.to_fingerprint
     end
     
+    def parent_fingerprint
+      if @parent_fingerprint
+        @parent_fingerprint
+      else
+        depth.zero? ? '00000000' : parent.to_fingerprint
+      end
+    end
+
     def to_address
       address = network[:address_version] + to_identifier
       to_serialized_base58 address
