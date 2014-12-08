@@ -34,15 +34,21 @@ module MoneyTree
       sum_point = EC_POINT_new(group)
       success = EC_POINT_add(group, sum_point, point_0_pt, point_1_pt, nil)
       hex = EC_POINT_point2hex(group, sum_point, POINT_CONVERSION_UNCOMPRESSED, nil)
+
       EC_KEY_free(eckey)
       EC_POINT_free(sum_point)
+      EC_POINT_free(point_0_pt)
+      EC_POINT_free(point_1_pt)
+
       hex
     end
 
     def self.validate_points(*points)
       points.each do |point|
-        unless point.is_a?(OpenSSL::PKey::EC::Point)
+        if !point.is_a?(OpenSSL::PKey::EC::Point)
           raise ArgumentError, "point must be an OpenSSL::PKey::EC::Point object" 
+        elsif point.infinity?
+          raise ArgumentError, "point must not be infinity" 
         end
       end
     end
