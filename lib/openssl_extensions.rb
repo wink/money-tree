@@ -15,6 +15,7 @@ module MoneyTree
     attach_function :EC_KEY_free, [:pointer], :int
     attach_function :EC_KEY_get0_group, [:pointer], :pointer
     attach_function :EC_KEY_new_by_curve_name, [:int], :pointer
+    attach_function :EC_GROUP_clear_free, [:pointer], :int
     attach_function :EC_POINT_clear_free, [:pointer], :int
     attach_function :EC_POINT_add, [:pointer, :pointer, :pointer, :pointer, :pointer], :int
     attach_function :EC_POINT_point2hex, [:pointer, :pointer, :int, :pointer], :string
@@ -39,6 +40,7 @@ module MoneyTree
       EC_POINT_clear_free(sum_point)
       EC_POINT_clear_free(point_0_pt)
       EC_POINT_clear_free(point_1_pt)
+      EC_GROUP_clear_free(group)
 
       hex
     end
