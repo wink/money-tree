@@ -22,6 +22,7 @@ module MoneyTree
     attach_function :EC_POINT_new, [:pointer], :pointer
     
     def self.add(point_0, point_1)
+      validate_points(point_0, point_1)
       eckey = EC_KEY_new_by_curve_name(NID_secp256k1)
       group = EC_KEY_get0_group(eckey)
       
@@ -36,6 +37,14 @@ module MoneyTree
       EC_KEY_free(eckey)
       EC_POINT_free(sum_point)
       hex
+    end
+
+    def self.validate_points(*points)
+      points.each do |point|
+        unless point.is_a?(OpenSSL::PKey::EC::Point)
+          raise ArgumentError, "point must be an OpenSSL::PKey::EC::Point object" 
+        end
+      end
     end
   end
 end
