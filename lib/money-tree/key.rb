@@ -84,6 +84,7 @@ module MoneyTree
     end
 
     def from_bignum(bignum = raw_key)
+      # TODO: does this need a byte size specification?
       int_to_hex(bignum)
     end
 
@@ -137,7 +138,7 @@ module MoneyTree
     end
     
     def to_hex
-      int_to_hex @ec_key.private_key
+      int_to_hex @ec_key.private_key, 64
     end
     
     def to_wif(opts = {})
@@ -251,7 +252,7 @@ module MoneyTree
     end
     
     def to_hex
-      int_to_hex to_i
+      int_to_hex to_i, 66
     end
     
     def to_i
