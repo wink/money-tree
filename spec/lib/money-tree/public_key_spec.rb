@@ -168,6 +168,10 @@ describe MoneyTree::PublicKey do
       it "should have an address starting with m or n" do
         expect(%w(m n)).to include(@key.to_s[0])
       end
+
+      it "should have an uncompressed address starting with m or n" do
+        expect(%w(m n)).to include(@key.uncompressed.to_s[0])
+      end
     end
 
     context 'without private key' do
