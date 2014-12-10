@@ -198,6 +198,9 @@ module MoneyTree
         @group = PKey::EC::Group.new GROUP_NAME
         @key = parse_raw_key
       end
+
+      @options[:network] = @network_key # remember for deep clone
+
       raise ArgumentError, "Must initialize with a MoneyTree::PrivateKey or a public key value" if @key.nil?
     end
     
