@@ -423,7 +423,13 @@ describe MoneyTree::Master do
             expect(@master.to_fingerprint).to eql("bd16bee5")
             expect(@master.to_address).to eql("1JEoxevbLLG8cVqeoGKQiAwoWbNYSUyYjg")
           end
-      
+
+          it "generates compressed and uncompressed addresses" do
+            expect(@master.to_address).to eql("1JEoxevbLLG8cVqeoGKQiAwoWbNYSUyYjg")
+            expect(@master.to_address(true)).to eql("1JEoxevbLLG8cVqeoGKQiAwoWbNYSUyYjg")
+            expect(@master.to_address(false)).to eql("1AEg9dFEw29kMgaN4BNHALu7AzX5XUfzSU")
+          end
+
           it "generates a secret key" do
             expect(@master.private_key.to_hex).to eql("4b03d6fc340455b363f51020ad3ecca4f0850280cf436c70c727923f6db46c3e")
             expect(@master.private_key.to_wif).to eql("KyjXhyHF9wTphBkfpxjL8hkDXDUSbE3tKANT94kXSyh6vn6nKaoy")

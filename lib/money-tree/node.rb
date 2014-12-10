@@ -129,9 +129,10 @@ module MoneyTree
       raise PrivatePublicMismatch if type.to_sym == :private && private_key.nil?
       to_serialized_base58 to_serialized_hex(type)
     end
-    
-    def to_identifier
-      public_key.compressed.to_ripemd160
+
+    def to_identifier(compressed=true)
+      key = compressed ? public_key.compressed : public_key.uncompressed
+      key.to_ripemd160
     end
     
     def to_fingerprint
@@ -146,8 +147,8 @@ module MoneyTree
       end
     end
 
-    def to_address
-      address = network[:address_version] + to_identifier
+    def to_address(compressed=true)
+      address = network[:address_version] + to_identifier(compressed)
       to_serialized_base58 address
     end
     
