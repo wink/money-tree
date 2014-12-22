@@ -10,47 +10,47 @@ describe MoneyTree::PublicKey do
   
     describe "to_hex(compressed: false)" do
       it "has 65 bytes" do
-        @key.uncompressed.to_hex.length.should == 130
+        expect(@key.uncompressed.to_hex.length).to eql(130)
       end
     
       it "is a valid hex" do
-        @key.uncompressed.to_hex.should == '042dfc2557a007c93092c2915f11e8aa70c4f399a6753e2e908330014091580e4b11203096f1a1c5276a73f91b9465357004c2103cc42c63d6d330df589080d2e4'      
+        expect(@key.uncompressed.to_hex).to eql('042dfc2557a007c93092c2915f11e8aa70c4f399a6753e2e908330014091580e4b11203096f1a1c5276a73f91b9465357004c2103cc42c63d6d330df589080d2e4'      )
       end
     end
   
     describe "to_hex" do
       it "has 33 bytes" do
-        @key.to_hex.length.should == 66
+        expect(@key.to_hex.length).to eql(66)
       end
   
       it "is a valid compressed hex" do
-        @key.to_hex.should == '022dfc2557a007c93092c2915f11e8aa70c4f399a6753e2e908330014091580e4b'      
+        expect(@key.to_hex).to eql('022dfc2557a007c93092c2915f11e8aa70c4f399a6753e2e908330014091580e4b'      )
       end
     end
   
     describe "to_fingerprint" do
       it "returns a valid fingerprint" do
-        @key.to_fingerprint.should == "1fddf42e"
+        expect(@key.to_fingerprint).to eql("1fddf42e")
       end
     end
   
     describe "to_address(compressed: false)" do
       it "has 34 characters" do
-        @key.uncompressed.to_address.length.should == 34
+        expect(@key.uncompressed.to_address.length).to eql(34)
       end
     
       it "is a valid bitcoin address" do
-        @key.uncompressed.to_address.should == '133bJA2xoVqBUsiR3uSkciMo5r15fLAaZg'      
+        expect(@key.uncompressed.to_address).to eql('133bJA2xoVqBUsiR3uSkciMo5r15fLAaZg'      )
       end
     end
   
     describe "to_compressed_address" do
       it "has 34 characters" do
-        @key.to_address.length.should == 34
+        expect(@key.to_address.length).to eql(34)
       end
     
       it "is a valid compressed bitcoin address" do
-        @key.to_address.should == '13uVqa35BMo4mYq9LiZrXVzoz9EFZ6aoXe'      
+        expect(@key.to_address).to eql('13uVqa35BMo4mYq9LiZrXVzoz9EFZ6aoXe'      )
       end
     end
   end
@@ -62,63 +62,63 @@ describe MoneyTree::PublicKey do
     
     describe "to_hex(compressed: false)" do
       it "has 65 bytes" do
-        @key.uncompressed.to_hex.length.should == 130
+        expect(@key.uncompressed.to_hex.length).to eql(130)
       end
     
       it "is a valid hex" do
-        @key.uncompressed.to_hex.should == '042dfc2557a007c93092c2915f11e8aa70c4f399a6753e2e908330014091580e4b11203096f1a1c5276a73f91b9465357004c2103cc42c63d6d330df589080d2e4'      
+        expect(@key.uncompressed.to_hex).to eql('042dfc2557a007c93092c2915f11e8aa70c4f399a6753e2e908330014091580e4b11203096f1a1c5276a73f91b9465357004c2103cc42c63d6d330df589080d2e4'      )
       end
     end
   
     describe "to_hex" do
       it "has 33 bytes" do
-        @key.compressed.to_hex.length.should == 66
+        expect(@key.compressed.to_hex.length).to eql(66)
       end
   
       it "is a valid compressed hex" do
-        @key.compressed.to_hex.should == '022dfc2557a007c93092c2915f11e8aa70c4f399a6753e2e908330014091580e4b'      
+        expect(@key.compressed.to_hex).to eql('022dfc2557a007c93092c2915f11e8aa70c4f399a6753e2e908330014091580e4b'      )
       end
     end
   
     describe "to_fingerprint" do
       it "returns a valid fingerprint" do
-        @key.compressed.to_fingerprint.should == "1fddf42e"
+        expect(@key.compressed.to_fingerprint).to eql("1fddf42e")
       end
     end
   
     describe "to_address(compressed: false)" do
       it "has 34 characters" do
-        @key.uncompressed.to_address.length.should == 34
+        expect(@key.uncompressed.to_address.length).to eql(34)
       end
     
       it "is a valid bitcoin address" do
-        @key.uncompressed.to_address.should == '133bJA2xoVqBUsiR3uSkciMo5r15fLAaZg'      
+        expect(@key.uncompressed.to_address).to eql('133bJA2xoVqBUsiR3uSkciMo5r15fLAaZg'      )
       end
     end
   
     describe "to_compressed_address" do
       it "has 34 characters" do
-        @key.compressed.to_address.length.should == 34
+        expect(@key.compressed.to_address.length).to eql(34)
       end
     
       it "is a valid compressed bitcoin address" do
-        @key.compressed.to_address.should == '13uVqa35BMo4mYq9LiZrXVzoz9EFZ6aoXe'      
+        expect(@key.compressed.to_address).to eql('13uVqa35BMo4mYq9LiZrXVzoz9EFZ6aoXe'      )
       end
     end
     
     describe "#compression" do
       it "returns current compression setting" do
         @key.compression = :uncompressed
-        @key.compression.should == :uncompressed
+        expect(@key.compression).to eql(:uncompressed)
         @key.compression = :compressed
-        @key.compression.should == :compressed
+        expect(@key.compression).to eql(:compressed)
       end
     end
   end
   
   describe "with a bad key" do
     it "raises KeyFormatNotFound" do
-      lambda { @key = MoneyTree::PublicKey.new 'THISISNOTAVALIDKEY' }.should raise_error(MoneyTree::Key::KeyFormatNotFound)
+      expect { @key = MoneyTree::PublicKey.new 'THISISNOTAVALIDKEY' }.to raise_error(MoneyTree::Key::KeyFormatNotFound)
     end
   end
 
@@ -128,7 +128,7 @@ describe MoneyTree::PublicKey do
       100.times do 
         results << MoneyTree::PublicKey.new('042dfc2557a007c93092c2915f11e8aa70c4f399a6753e2e908330014091580e4b11203096f1a1c5276a73f91b9465357004c2103cc42c63d6d330df589080d2e4').to_s
       end
-      results.uniq.length.should == 1
+      expect(results.uniq.length).to eql(1)
     end
   end
 
@@ -141,7 +141,7 @@ describe MoneyTree::PublicKey do
       before_str = @key.to_s
       @key.uncompressed
       after_str = @key.to_s
-      before_str.should == after_str
+      expect(before_str).to eql(after_str)
     end
   end
 
@@ -154,7 +154,7 @@ describe MoneyTree::PublicKey do
       before_str = @key.to_s
       @key.compressed
       after_str = @key.to_s
-      before_str.should == after_str
+      expect(before_str).to eql(after_str)
     end
   end
 
@@ -166,7 +166,11 @@ describe MoneyTree::PublicKey do
       end
 
       it "should have an address starting with m or n" do
-        %w(m n).should include(@key.to_s[0])
+        expect(%w(m n)).to include(@key.to_s[0])
+      end
+
+      it "should have an uncompressed address starting with m or n" do
+        expect(%w(m n)).to include(@key.uncompressed.to_s[0])
       end
     end
 
@@ -176,7 +180,7 @@ describe MoneyTree::PublicKey do
       end
 
       it "should have an address starting with m or n" do
-        %w(m n).should include(@key.to_s[0])
+        expect(%w(m n)).to include(@key.to_s[0])
       end
     end
   end
