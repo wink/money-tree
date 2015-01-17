@@ -84,7 +84,7 @@ module MoneyTree
     
     def derive_private_key(i = 0)
       message = i >= 0x80000000 || i < 0 ? private_derivation_message(i) : public_derivation_message(i)
-      hash = hmac_sha512 int_to_bytes(chain_code), message
+      hash = hmac_sha512 hex_to_bytes(chain_code_hex), message
       left_int = left_from_hash(hash)
       raise InvalidKeyForIndex, 'greater than or equal to order' if left_int >= MoneyTree::Key::ORDER # very low probability
       child_private_key = (left_int + private_key.to_i) % MoneyTree::Key::ORDER
@@ -96,7 +96,7 @@ module MoneyTree
     def derive_public_key(i = 0)
       raise PrivatePublicMismatch if i >= 0x80000000
       message = public_derivation_message(i)
-      hash = hmac_sha512 int_to_bytes(chain_code), message
+      hash = hmac_sha512 hex_to_bytes(chain_code_hex), message
       left_int = left_from_hash(hash)
       raise InvalidKeyForIndex, 'greater than or equal to order' if left_int >= MoneyTree::Key::ORDER # very low probability
       factor = BN.new left_int.to_s
