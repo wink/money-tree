@@ -793,5 +793,15 @@ describe MoneyTree::Master do
         end
       end
     end
+
+    describe "deriving a child node" do
+      describe "#node_for_path" do
+        it "correctly derives from a node with a chain code represented in 31 bytes" do
+          @node = MoneyTree::Node.from_serialized_address "tpubD6NzVbkrYhZ4WM42MZZmUZ7LjxyjBf5bGjEeLf9nJnMZqocGJWu94drvpqWsE9jE7k3h22v6gjpPGnqgBrqwGsRYwDXVRfQ2M9dfHbXP5zA"
+          @subnode = @node.node_for_path('m/1')
+          expect(@subnode.to_serialized_address).to eql("tpubDA7bCxb3Nrcz2ChXyPqXxbG4q5oiAZUHR7wD3LAiXukuxmT65weWw84XYmjhkJTkJEM6LhNWioWTpKEkQp7j2fgVccj3PPc271xHDeMsaTY")
+        end
+      end
+    end
   end
 end
