@@ -40,6 +40,12 @@ module MoneyTree
       EC_POINT_clear_free(point_0_pt)
       EC_POINT_clear_free(point_1_pt)
 
+      eckey = nil
+      group = nil
+      sum_point = nil
+      point_0_pt = nil
+      point_1_pt = nil
+
       hex
     end
 
