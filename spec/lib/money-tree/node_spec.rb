@@ -24,49 +24,49 @@ describe MoneyTree::Master do
       end
 
       it "generates testnet address" do
-        expect(%w(m n)).to include(@master.to_address[0])
+        expect(%w(m n)).to include(@master.to_address(network: :bitcoin_testnet)[0])
       end
 
       it "generates testnet compressed wif" do
-        expect(@master.private_key.to_wif[0]).to eql('c')
+        expect(@master.private_key.to_wif(network: :bitcoin_testnet)[0]).to eql('c')
       end
 
       it "generates testnet uncompressed wif" do
-        expect(@master.private_key.to_wif(compressed: false)[0]).to eql('9')
+        expect(@master.private_key.to_wif(compressed: false, network: :bitcoin_testnet)[0]).to eql('9')
       end
 
       it "generates testnet serialized private address" do
-        expect(@master.to_serialized_address(:private).slice(0, 4)).to eql("tprv")
+        expect(@master.to_serialized_address(:private, network: :bitcoin_testnet).slice(0, 4)).to eql("tprv")
       end
 
       it "generates testnet serialized public address" do
-        expect(@master.to_serialized_address.slice(0, 4)).to eql("tpub")
+        expect(@master.to_serialized_address(network: :bitcoin_testnet).slice(0, 4)).to eql("tpub")
       end
 
       it "imports from testnet serialized private address" do
         node = MoneyTree::Node.from_serialized_address 'tprv8ZgxMBicQKsPcuN7bfUZqq78UEYapr3Tzmc9NcDXw8BnBJ47dZYr6SusnfYj7vbAYP9CP8ZiD5aVBTUo1yU5QP56mepKVvuEbu8KZQXMKNE'
-        expect(node.to_serialized_address(:private)).to eql('tprv8ZgxMBicQKsPcuN7bfUZqq78UEYapr3Tzmc9NcDXw8BnBJ47dZYr6SusnfYj7vbAYP9CP8ZiD5aVBTUo1yU5QP56mepKVvuEbu8KZQXMKNE')
+        expect(node.to_serialized_address(:private, network: :bitcoin_testnet)).to eql('tprv8ZgxMBicQKsPcuN7bfUZqq78UEYapr3Tzmc9NcDXw8BnBJ47dZYr6SusnfYj7vbAYP9CP8ZiD5aVBTUo1yU5QP56mepKVvuEbu8KZQXMKNE')
       end
 
       it "imports from testnet serialized public address" do
         node = MoneyTree::Node.from_serialized_address 'tpubD6NzVbkrYhZ4YA8aUE9bBZTSyHJibBqwDny5urfwDdJc4W8od3y3Ebzy6CqsYn9CCC5P5VQ7CeZYpnT1kX3RPVPysU2rFRvYSj8BCoYYNqT'
-        expect(%w(m n)).to include(node.public_key.to_s[0])
-        expect(node.to_serialized_address).to eql('tpubD6NzVbkrYhZ4YA8aUE9bBZTSyHJibBqwDny5urfwDdJc4W8od3y3Ebzy6CqsYn9CCC5P5VQ7CeZYpnT1kX3RPVPysU2rFRvYSj8BCoYYNqT')
+        expect(%w(m n)).to include(node.public_key.to_s(network: :bitcoin_testnet)[0])
+        expect(node.to_serialized_address(network: :bitcoin_testnet)).to eql('tpubD6NzVbkrYhZ4YA8aUE9bBZTSyHJibBqwDny5urfwDdJc4W8od3y3Ebzy6CqsYn9CCC5P5VQ7CeZYpnT1kX3RPVPysU2rFRvYSj8BCoYYNqT')
       end
 
       it "generates testnet subnodes from serialized private address" do
         node = MoneyTree::Node.from_serialized_address 'tprv8ZgxMBicQKsPcuN7bfUZqq78UEYapr3Tzmc9NcDXw8BnBJ47dZYr6SusnfYj7vbAYP9CP8ZiD5aVBTUo1yU5QP56mepKVvuEbu8KZQXMKNE'
         subnode = node.node_for_path('1/1/1')
-        expect(%w(m n)).to include(subnode.public_key.to_s[0])
-        expect(subnode.to_serialized_address(:private).slice(0,4)).to eql('tprv')
-        expect(subnode.to_serialized_address.slice(0,4)).to eql('tpub')
+        expect(%w(m n)).to include(subnode.public_key.to_s(network: :bitcoin_testnet)[0])
+        expect(subnode.to_serialized_address(:private, network: :bitcoin_testnet).slice(0,4)).to eql('tprv')
+        expect(subnode.to_serialized_address(network: :bitcoin_testnet).slice(0,4)).to eql('tpub')
       end
 
       it "generates testnet subnodes from serialized public address" do
         node = MoneyTree::Node.from_serialized_address 'tpubD6NzVbkrYhZ4YA8aUE9bBZTSyHJibBqwDny5urfwDdJc4W8od3y3Ebzy6CqsYn9CCC5P5VQ7CeZYpnT1kX3RPVPysU2rFRvYSj8BCoYYNqT'
         subnode = node.node_for_path('1/1/1')
-        expect(%w(m n)).to include(subnode.public_key.to_s[0])
-        expect(subnode.to_serialized_address.slice(0,4)).to eql('tpub')
+        expect(%w(m n)).to include(subnode.public_key.to_s(network: :bitcoin_testnet)[0])
+        expect(subnode.to_serialized_address(network: :bitcoin_testnet).slice(0,4)).to eql('tpub')
       end
     end
 
@@ -799,7 +799,7 @@ describe MoneyTree::Master do
         it "correctly derives from a node with a chain code represented in 31 bytes" do
           @node = MoneyTree::Node.from_serialized_address "tpubD6NzVbkrYhZ4WM42MZZmUZ7LjxyjBf5bGjEeLf9nJnMZqocGJWu94drvpqWsE9jE7k3h22v6gjpPGnqgBrqwGsRYwDXVRfQ2M9dfHbXP5zA"
           @subnode = @node.node_for_path('m/1')
-          expect(@subnode.to_serialized_address).to eql("tpubDA7bCxb3Nrcz2ChXyPqXxbG4q5oiAZUHR7wD3LAiXukuxmT65weWw84XYmjhkJTkJEM6LhNWioWTpKEkQp7j2fgVccj3PPc271xHDeMsaTY")
+          expect(@subnode.to_serialized_address(network: :bitcoin_testnet)).to eql("tpubDA7bCxb3Nrcz2ChXyPqXxbG4q5oiAZUHR7wD3LAiXukuxmT65weWw84XYmjhkJTkJEM6LhNWioWTpKEkQp7j2fgVccj3PPc271xHDeMsaTY")
         end
       end
     end

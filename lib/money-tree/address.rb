@@ -8,8 +8,8 @@ module MoneyTree
       @public_key = MoneyTree::PublicKey.new(@private_key, opts)
     end
     
-    def to_s
-      public_key.to_s
+    def to_s(network: :bitcoin)
+      public_key.to_s(network: network)
     end
 
   end

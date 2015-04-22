@@ -45,7 +45,7 @@ describe MoneyTree::PrivateKey do
     end
     
     it "is valid" do
-      expect(@key.to_wif(compressed: false)).to eql('5JXz5ZyFk31oHVTQxqce7yitCmTAPxBqeGQ4b7H3Aj3L45wUhoa'      )
+      expect(@key.to_wif(compressed: false)).to eql('5JXz5ZyFk31oHVTQxqce7yitCmTAPxBqeGQ4b7H3Aj3L45wUhoa')
     end
   end
   
@@ -104,7 +104,7 @@ describe MoneyTree::PrivateKey do
 
     describe "to_wif" do
       it "returns same wif" do
-        expect(@key.to_wif).to eql('cRhes8SBnsF6WizphaRKQKZZfDniDa9Bxcw31yKeEC1KDExhxFgD')
+        expect(@key.to_wif(network: :bitcoin_testnet)).to eql('cRhes8SBnsF6WizphaRKQKZZfDniDa9Bxcw31yKeEC1KDExhxFgD')
       end
     end
   end

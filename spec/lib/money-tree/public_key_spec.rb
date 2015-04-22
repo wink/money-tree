@@ -161,26 +161,26 @@ describe MoneyTree::PublicKey do
   context "testnet" do
     context 'with private key' do
       before do
-        @private_key = MoneyTree::PrivateKey.new network: :bitcoin_testnet
+        @private_key = MoneyTree::PrivateKey.new
         @key = MoneyTree::PublicKey.new(@private_key)
       end
 
       it "should have an address starting with m or n" do
-        expect(%w(m n)).to include(@key.to_s[0])
+        expect(%w(m n)).to include(@key.to_s(network: :bitcoin_testnet)[0])
       end
 
       it "should have an uncompressed address starting with m or n" do
-        expect(%w(m n)).to include(@key.uncompressed.to_s[0])
+        expect(%w(m n)).to include(@key.uncompressed.to_s(network: :bitcoin_testnet)[0])
       end
     end
 
     context 'without private key' do
       before do
-        @key = MoneyTree::PublicKey.new('0297b033ba894611345a0e777861237ef1632370fbd58ebe644eb9f3714e8fe2bc', network: :bitcoin_testnet)
+        @key = MoneyTree::PublicKey.new('0297b033ba894611345a0e777861237ef1632370fbd58ebe644eb9f3714e8fe2bc')
       end
 
       it "should have an address starting with m or n" do
-        expect(%w(m n)).to include(@key.to_s[0])
+        expect(%w(m n)).to include(@key.to_s(network: :bitcoin_testnet)[0])
       end
     end
   end

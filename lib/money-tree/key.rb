@@ -14,7 +14,7 @@ module MoneyTree
     class InvalidWIFFormat < Exception; end
     class InvalidBase64Format < Exception; end
     
-    attr_reader :options, :key, :raw_key, :network, :network_key
+    attr_reader :options, :key, :raw_key
     attr_accessor :ec_key
     
     GROUP_NAME = 'secp256k1'
@@ -39,8 +39,6 @@ module MoneyTree
     def initialize(opts = {})
       @options = opts
       @ec_key = PKey::EC.new GROUP_NAME
-      @network_key = options[:network] || :bitcoin
-      @network = MoneyTree::NETWORKS[network_key]
       if @options[:key]
         @raw_key = @options[:key]
         @key = parse_raw_key
@@ -94,22 +92,12 @@ module MoneyTree
     
     def from_wif(wif = raw_key)
       compressed = wif.length == 52
-      parse_network_from_wif(wif, compressed: compressed)
       validate_wif(wif)
       hex = decode_base58(wif)
       last_char = compressed ? -11 : -9
       hex.slice(2..last_char)
     end
 
-    def parse_network_from_wif(wif, opts = {})
-      networks = MoneyTree::NETWORKS
-      chars_key = opts[:compressed] ? :compressed_wif_chars : :uncompressed_wif_chars
-      @network_key = networks.keys.select do |k|
-        networks[k][chars_key].include?(wif.slice(0))
-      end.first
-      @network = networks[network_key]
-    end
-    
     def from_base64(base64_key = raw_key)
       raise InvalidBase64Format unless base64_format?(base64_key)
       decode_base64(base64_key)
@@ -141,10 +129,9 @@ module MoneyTree
       int_to_hex @ec_key.private_key, 64
     end
     
-    def to_wif(opts = {})
-      opts[:compressed] = true unless opts[:compressed] == false
-      source = network[:privkey_version] + to_hex
-      source += network[:privkey_compression_flag] if opts[:compressed]
+    def to_wif(compressed: true, network: :bitcoin)
+      source = NETWORKS[network][:privkey_version] + to_hex
+      source += NETWORKS[network][:privkey_compression_flag] if compressed
       hash = sha256(source)
       hash = sha256(hash)
       checksum = hash.slice(0..7)
@@ -154,7 +141,6 @@ module MoneyTree
 
     def wif_valid?(wif)
       hex = decode_base58(wif)
-      return false unless hex.slice(0..1) == network[:privkey_version]
       checksum = hex.chars.to_a.pop(8).join
       source = hex.slice(0..-9)
       hash = sha256(source)
@@ -171,8 +157,8 @@ module MoneyTree
       encode_base64(to_hex)
     end
     
-    def to_s
-      to_wif
+    def to_s(network: :bitcoin)
+      to_wif(network: network)
     end
     
   end
@@ -183,23 +169,16 @@ module MoneyTree
     def initialize(p_key, opts = {})
       @options = opts
       @options[:compressed] = true if @options[:compressed].nil?
-      
       if p_key.is_a?(PrivateKey)
         @private_key = p_key
-        @network_key = private_key.network_key
-        @network = MoneyTree::NETWORKS[network_key]
         @point = @private_key.calculate_public_key(@options)
         @group = @point.group
         @key = @raw_key = to_hex
       else
-        @network_key = @options[:network] || :bitcoin
-        @network = MoneyTree::NETWORKS[network_key]
         @raw_key = p_key
         @group = PKey::EC::Group.new GROUP_NAME
         @key = parse_raw_key
       end
-
-      @options[:network] = @network_key # remember for deep clone
 
       raise ArgumentError, "Must initialize with a MoneyTree::PrivateKey or a public key value" if @key.nil?
     end
@@ -267,9 +246,9 @@ module MoneyTree
       ripemd160 hash
     end
     
-    def to_address
+    def to_address(network: :bitcoin)
       hash = to_ripemd160
-      address = network[:address_version] + hash
+      address = NETWORKS[network][:address_version] + hash
       to_serialized_base58 address
     end
     alias :to_s :to_address
