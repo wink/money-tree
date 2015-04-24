@@ -14,7 +14,7 @@ module MoneyTree
       opts.each { |k, v| instance_variable_set "@#{k}", v }
     end
 
-    def self.from_wif(address, has_version: true) 
+    def self.from_bip32(address, has_version: true) 
       hex = from_serialized_base58 address
       hex.slice!(0..7) if has_version
       self.new({
@@ -26,9 +26,8 @@ module MoneyTree
     end
 
     def self.from_serialized_address(address)
-      puts "Node.from_serialized_address is DEPRECATED.\n
-            Please use .from_wif instead."
-      from_wif(address)
+      puts 'Node.from_serialized_address is DEPRECATED. Please use .from_bip32 instead.'
+      from_bip32(address)
     end
 
     def self.parse_out_key(hex)
@@ -116,9 +115,14 @@ module MoneyTree
       hex += type.to_sym == :private ? "00#{private_key.to_hex}" : public_key.compressed.to_hex
     end
     
-    def to_serialized_address(type = :public, network: :bitcoin)
+    def to_bip32(type = :public, network: :bitcoin)
       raise PrivatePublicMismatch if type.to_sym == :private && private_key.nil?
       to_serialized_base58 to_serialized_hex(type, network: network)
+    end
+
+    def to_serialized_address(type = :public, network: :bitcoin)
+      puts 'Node.to_serialized_address is DEPRECATED. Please use .to_bip32.'
+      to_bip32(type, network: network)
     end
 
     def to_identifier(compressed=true)
