@@ -56,7 +56,7 @@ describe MoneyTree::Address do
     end
 
     it "returns a testnet address" do
-      expect(%w(m n)).to include(@address.to_s[0])
+      expect(%w(m n)).to include(@address.to_s(network: :bitcoin_testnet)[0])
     end
   end
 end
