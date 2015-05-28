@@ -1,9 +1,9 @@
 module MoneyTree
-  NETWORKS = 
-    begin 
-      Hash.new do |_, key|
+  NETWORKS =
+    begin
+      hsh = Hash.new do |_, key|
         raise "#{key} is not a valid network!"
-      end.merge({
+      end.merge(
         bitcoin: {
           address_version: '00',
           p2sh_version: '05',
@@ -52,6 +52,8 @@ module MoneyTree
           uncompressed_wif_chars: %w(6),
           protocol_version: 70002
         }
-      })
+      )
+      hsh[:testnet3] = hsh[:bitcoin_testnet]
+      hsh
     end
 end
