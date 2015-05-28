@@ -27,6 +27,30 @@ module MoneyTree
           compressed_wif_chars: %w(c),
           uncompressed_wif_chars: %w(9),
           protocol_version: 70001
+        },
+        dogecoin: {
+          address_version: '1e',
+          p2sh_version: '16',
+          p2sh_char: ['9', 'A'],
+          privkey_version: '9e',
+          privkey_compression_flag: '01',
+          extended_privkey_version: "02FD3955",
+          extended_pubkey_version: "02FD3929",
+          compressed_wif_chars: %w(Q),
+          uncompressed_wif_chars: %w(6),
+          protocol_version: 70003
+        },
+        litecoin: {
+          address_version: '30',
+          p2sh_version: '05',
+          p2sh_char: '3',
+          privkey_version: 'b0',
+          privkey_compression_flag: '01',
+          extended_privkey_version: "019d9cfe",
+          extended_pubkey_version: "019da462",
+          compressed_wif_chars: %w(T),
+          uncompressed_wif_chars: %w(6),
+          protocol_version: 70002
         }
       })
     end

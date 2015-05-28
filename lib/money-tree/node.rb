@@ -26,7 +26,7 @@ module MoneyTree
     end
 
     def self.from_serialized_address(address)
-      puts 'Node.from_serialized_address is DEPRECATED. Please use .from_bip32 instead.'
+      warn 'Node.from_serialized_address is DEPRECATED. Please use .from_bip32 instead.'
       from_bip32(address)
     end
 
@@ -121,7 +121,7 @@ module MoneyTree
     end
 
     def to_serialized_address(type = :public, network: :bitcoin)
-      puts 'Node.to_serialized_address is DEPRECATED. Please use .to_bip32.'
+      warn 'Node.to_serialized_address is DEPRECATED. Please use .to_bip32.'
       to_bip32(type, network: network)
     end
 
