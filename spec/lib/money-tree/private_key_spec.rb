@@ -93,7 +93,17 @@ describe MoneyTree::PrivateKey do
   describe "parse_raw_key" do
     it "returns error if key is not Bignum, hex, base64, or wif formatted" do
       expect { @key = MoneyTree::PrivateKey.new(key: "Thisisnotakey") }.to raise_error(MoneyTree::Key::KeyFormatNotFound)
-      
+    end
+
+    it "raises an error that can be caught using a standard exception block" do
+      exception_raised = false
+
+      begin
+        MoneyTree::PrivateKey.new(key: "Thisisnotakey")
+      rescue => ex
+        exception_raised = true
+      end
+      fail unless exception_raised
     end
   end
 
