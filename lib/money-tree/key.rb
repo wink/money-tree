@@ -70,7 +70,7 @@ module MoneyTree
     end
 
     def parse_raw_key
-      result = if raw_key.is_a?(Bignum) then from_bignum
+      result = if raw_key.is_a?(Integer) then from_integer
       elsif hex_format? then from_hex
       elsif base64_format? then from_base64
       elsif compressed_wif_format? then from_wif
@@ -81,7 +81,7 @@ module MoneyTree
       result.downcase
     end
 
-    def from_bignum(bignum = raw_key)
+    def from_integer(bignum = raw_key)
       # TODO: does this need a byte size specification?
       int_to_hex(bignum)
     end
@@ -213,7 +213,7 @@ module MoneyTree
     end
 
     def parse_raw_key
-      result = if raw_key.is_a?(Bignum)
+      result = if raw_key.is_a?(Integer)
         set_point raw_key
       elsif hex_format?
         set_point hex_to_int(raw_key), compressed: false
