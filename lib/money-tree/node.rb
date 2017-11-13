@@ -5,10 +5,10 @@ module MoneyTree
     attr_reader :private_key, :public_key, :chain_code,
       :is_private, :depth, :index, :parent
 
-    class PublicDerivationFailure < Exception; end
-    class InvalidKeyForIndex < Exception; end
-    class ImportError < Exception; end
-    class PrivatePublicMismatch < Exception; end
+    class PublicDerivationFailure < StandardError; end
+    class InvalidKeyForIndex < StandardError; end
+    class ImportError < StandardError; end
+    class PrivatePublicMismatch < StandardError; end
 
     def initialize(opts = {})
       opts.each { |k, v| instance_variable_set "@#{k}", v }

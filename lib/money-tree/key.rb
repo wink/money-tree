@@ -7,12 +7,12 @@ module MoneyTree
     include OpenSSL
     include Support
     extend Support
-    class KeyInvalid < Exception; end
-    class KeyGenerationFailure < Exception; end
-    class KeyImportFailure < Exception; end
-    class KeyFormatNotFound < Exception; end
-    class InvalidWIFFormat < Exception; end
-    class InvalidBase64Format < Exception; end
+    class KeyInvalid < StandardError; end
+    class KeyGenerationFailure < StandardError; end
+    class KeyImportFailure < StandardError; end
+    class KeyFormatNotFound < StandardError; end
+    class InvalidWIFFormat < StandardError; end
+    class InvalidBase64Format < StandardError; end
 
     attr_reader :options, :key, :raw_key
     attr_accessor :ec_key
