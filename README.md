@@ -241,7 +241,7 @@ For instance:
 
 They are all equivalent ways of saying the same thing, but the first two are just a more human readable shorthand notation. You are free to use whichever notation you prefer. This gem will parse it.
 
-To add just a little more confusion to the mix, some wallets will use negative `i` values to also denote private derivation. Any `i` value that is negative will be processed using private derivation by this library. e.g. `"m/-1/1"`.
+To add just a little more confusion to the mix, some wallets will use negative `i` values to also denote private derivation. Any `i` value that is negative will be processed using private derivation by this library. e.g. `"m/-1/1"`. (NOTE: known issue, see below)
 
 
 ## Contributing
@@ -251,3 +251,8 @@ To add just a little more confusion to the mix, some wallets will use negative `
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+## Known Issues (PRs welcome)
+
+- Segwit ([BIP49](https://github.com/bitcoin/bips/blob/master/bip-0049.mediawiki)) address generation is not supported
+- Use of negative integers in paths does _not_ produce the correct hardened derivation.
